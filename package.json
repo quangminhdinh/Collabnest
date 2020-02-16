@@ -1,0 +1,25 @@
+{
+  "name": "collabnest",
+  "version": "1.0.0",
+  "description": "description",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Veldora/Collabnest.git"
+  },
+  "keywords": [
+    "Collabnest"
+  ],
+  "author": "Minh Dinh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Veldora/Collabnest/issues"
+  },
+  "homepage": "https://github.com/Veldora/Collabnest#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
