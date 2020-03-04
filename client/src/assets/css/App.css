@@ -32,7 +32,7 @@ body {
 
 .banner {
   background-image: url('../img/v1.jpg');
-  height: 120vh;
+  height: 100vh;
   background-repeat: no-repeat;
   background-size: 100%;
 }

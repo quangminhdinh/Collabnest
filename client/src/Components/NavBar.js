@@ -19,7 +19,7 @@ const NavBar = props => {
     return (
         <Navbar id="nav1" color="white" light expand="md">
             <div className="container">
-                <NavbarBrand tag={Link} to="/"><img height='40px' src={logo}/> <span className="bn-lgo align-middle">Collabnest</span></NavbarBrand>
+                <NavbarBrand tag={Link} to="/"><img height='40px' src={logo} alt="logo"/> <span className="bn-lgo align-middle">Collabnest</span></NavbarBrand>
                 <NavbarToggler onClick={toggle} />
                 <Collapse isOpen={isOpen} navbar>
                 <div className="mr-auto"></div>
