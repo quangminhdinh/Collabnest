@@ -81,10 +81,11 @@ body {
 }
 
 .auth-ls > input {
-  margin: 1.5rem auto;
+  margin-top: 1.5rem;
 }
 
 .auth-ls > div > button {
+  margin-top: 1.5rem;
   width: 25rem;
 }
 
@@ -92,4 +93,15 @@ body {
   margin: 1rem auto;
   text-align: end;
   font-size: .9rem;
+}
+
+.cr-sn {
+  text-align: end;
+  font-size: .9rem;
+  color: red;
+  padding-bottom: .7rem;
+}
+
+.err-auth {
+  display: none;
 }
