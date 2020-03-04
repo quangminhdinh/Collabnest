@@ -31,7 +31,7 @@ body {
 }
 
 .banner {
-  background-image: url('../img/v1.png');
+  background-image: url('../img/v1.jpg');
   height: 120vh;
   background-repeat: no-repeat;
   background-size: 100%;
@@ -63,4 +63,33 @@ body {
 .bn-but > button > a {
   text-decoration: none;
   color: #fff;
+}
+
+.lgn-card {
+  padding-top: 4rem;
+}
+
+.auth-ls > .card-title {
+  text-align: center;
+  color: #3a3a3a;
+  font-size: 1.5rem;
+  margin: 2rem auto;
+}
+
+.auth-ls {
+  margin: .2rem 2rem;
+}
+
+.auth-ls > input {
+  margin: 1.5rem auto;
+}
+
+.auth-ls > div > button {
+  width: 25rem;
+}
+
+.auth-ls > .cr-lgn {
+  margin: 1rem auto;
+  text-align: end;
+  font-size: .9rem;
 }
