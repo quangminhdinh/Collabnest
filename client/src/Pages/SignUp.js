@@ -19,32 +19,50 @@ const SignUp = props => {
         const username = document.getElementById('username').value;
         const pass = document.getElementById('pass').value;
 
-        var docRef = props.firebase.firestore.collection("users").doc(email);
-
-        docRef.get().then((doc) => {
-            if (doc.exists) {
-                alert("Email da ton tai!");
-            } else {
-                docRef.set({
-                    username : username,
-                    pass: pass,
-                    email: email
-                }, {merge: true})
-                .then(function() {
-                    console.log("Document successfully written!");
-                    localStorage.username = username;
-                    localStorage.pass = pass;
-                    localStorage.email = email;
-                    const history = createBrowserHistory({forceRefresh: true});
-                    history.push('/');
-                })
-                .catch(function(error) {
-                    console.error("Error writing document: ", error);
-                });
-            }
-        }).catch(function(error) {
-            console.log("Error getting document:", error);
+        props.firebase.auth.createUserWithEmailAndPassword(email, pass).then((authData) => {
+            const user = props.firebase.auth.currentUser;
+            user.updateProfile({
+                displayName: username
+            }).then(function() {
+                // Update successful.
+                const history = createBrowserHistory({forceRefresh: true});
+                history.push('/');
+            }).catch(function(error) {
+                // An error happened.
+                alert(error.message);
+            });
+        }).catch((error) => {
+            // Handle Errors here.
+            alert(error.message);
         });
+
+
+        // var docRef = props.firebase.firestore.collection("users").doc(email);
+
+        // docRef.get().then((doc) => {
+        //     if (doc.exists) {
+        //         alert("Email da ton tai!");
+        //     } else {
+        //         docRef.set({
+        //             username : username,
+        //             pass: pass,
+        //             email: email
+        //         }, {merge: true})
+        //         .then(function() {
+        //             console.log("Document successfully written!");
+        //             localStorage.username = username;
+        //             localStorage.pass = pass;
+        //             localStorage.email = email;
+        //             const history = createBrowserHistory({forceRefresh: true});
+        //             history.push('/');
+        //         })
+        //         .catch(function(error) {
+        //             console.error("Error writing document: ", error);
+        //         });
+        //     }
+        // }).catch(function(error) {
+        //     console.log("Error getting document:", error);
+        // });
     }
 
     return (

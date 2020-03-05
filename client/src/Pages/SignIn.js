@@ -24,26 +24,32 @@ const SignIn = props => {
             return false;
         }
 
-        var docRef = props.firebase.firestore.collection("users").doc(email);
-
-        docRef.get().then((doc) => {
-            if (doc.exists) {
-                if (doc.data().pass === pass) {
-                    localStorage.username = doc.data().username;
-                    localStorage.pass = pass;
-                    localStorage.email = email;
-                    const history = createBrowserHistory({forceRefresh: true});
-                    history.push('/');
-                }
-                else {
-                    alert("Sai mat khau");
-                }
-            } else {
-                alert("Tai khoan khong ton tai!");
-            }
-        }).catch(function(error) {
-            console.log("Error getting document:", error);
+        props.firebase.auth.signInWithEmailAndPassword(email, pass).then(authVal => {
+            const history = createBrowserHistory({forceRefresh: true});
+            history.push('/');
+        }).catch((error) => {
+            // Handle Errors here.
+            alert(error.message);
         });
+
+        // var docRef = props.firebase.firestore.collection("users").doc(email);
+
+        // docRef.get().then((doc) => {
+        //     if (doc.exists) {
+        //         if (doc.data().pass === pass) {
+        //             localStorage.username = doc.data().username;
+        //             localStorage.pass = pass;
+        //             localStorage.email = email;
+        //         }
+        //         else {
+        //             alert("Sai mat khau");
+        //         }
+        //     } else {
+        //         alert("Tai khoan khong ton tai!");
+        //     }
+        // }).catch(function(error) {
+        //     console.log("Error getting document:", error);
+        // });
     }
 
     return (
