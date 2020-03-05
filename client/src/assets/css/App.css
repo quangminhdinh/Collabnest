@@ -2,32 +2,32 @@ body {
   font-family: Montserrat, sans-serif;
 }
 
+a {
+  text-decoration: none !important;
+}
+
 .bn-lgo {
   margin-left: .3rem;
   font-weight: bold;
   font-size: 1.7rem;
   color: #3a3a3a;
+  font-family: Montserrat, sans-serif;
 }
 
-.nav-item {
-  margin: .3rem;
-  padding: .5rem;
-  border-radius: 1rem;
+.bn12 {
+  border-radius: 1rem !important;
+  margin: .3rem !important;
+  padding: .5rem !important;
+  color: #3a3a3a !important;
+  font-size: 1rem !important;
 }
 
-.nav-item > a {
-  color: #3a3a3a;
-  margin: auto .4rem;
-  text-decoration: none;
+.bn12:hover {
+  background-color: #D1ECFF !important;
 }
 
-.nav-item:hover {
-  background-color: #D1ECFF;
-  transition: background-color 0.5s;
-}
-
-.nav-item:active {
-  background-color: #83C4E2;
+.bn12:active {
+  background-color: #83C4E2 !important;
 }
 
 .banner {
@@ -53,16 +53,17 @@ body {
   top: 25rem;
 }
 
-.bn-but > button {
+.bn-but > a {
   display: inline-block;
   padding: .7rem 2rem;
   position: relative;
   left: -50%;
+  background-color: #17a2b8;
+  color: #fff;
 }
 
-.bn-but > button > a {
-  text-decoration: none;
-  color: #fff;
+.bn-but > a:hover {
+  background-color: #007bff;
 }
 
 .lgn-card {
@@ -73,26 +74,45 @@ body {
   text-align: center;
   color: #3a3a3a;
   font-size: 1.5rem;
-  margin: 2rem auto;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
 }
 
-.auth-ls {
-  margin: .2rem 2rem;
+.g1-lgn, .auth-ls {
+  margin: 4rem 2rem !important;
 }
 
 .auth-ls > input {
   margin-top: 1.5rem;
 }
 
+.tf-clgn {
+  margin: .5rem 0 !important;
+}
+
 .auth-ls > div > button {
-  margin-top: 1.5rem;
+  margin-top: 2.1rem;
   width: 25rem;
+  background-color: #007bff;
+  color: #fff;
+}
+
+.auth-ls > div > button:hover {
+  background-color: #0062cc;
 }
 
 .auth-ls > .cr-lgn {
   margin: 1rem auto;
   text-align: end;
   font-size: .9rem;
+}
+
+.auth-ls > .cr-lgn > a {
+  color: #007bff;
+}
+
+.auth-ls > .cr-lgn > a:hover {
+  color: #0056b3;
 }
 
 .cr-sn {

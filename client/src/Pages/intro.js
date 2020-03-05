@@ -1,11 +1,19 @@
 import React from 'react';
-import {Button} from 'reactstrap';
+import {Link as RouterLink} from 'react-router-dom';
+import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
 import {Helmet} from "react-helmet";
 import NavBar from '../Components/NavBar';
 // import banner from '../assets/img/v2.jpg';
 
-const intr = ({history}) => {
-    
+const useStyles = makeStyles(theme => ({
+    margin: {
+      margin: theme.spacing(1),
+    },
+}));
+
+const Intr = props => {
+    const classes = useStyles();
     return (
         <div>
             <Helmet>
@@ -16,7 +24,7 @@ const intr = ({history}) => {
                 {/* <img src={banner}/> */}
                 <h1 className="bn-cap">Collabnest</h1>
                 <div className="bn-but">
-                    <Button onClick={() => history.push('/signin')} color="info" size="lg">Get started</Button>
+                    <Button className={classes.margin} variant="contained" color="primary" size="large" component={RouterLink} to="/signin">Get started</Button>
                 </div>
             </section>
         </div>
@@ -24,4 +32,4 @@ const intr = ({history}) => {
 
 }
 
-export default intr;
+export default Intr;

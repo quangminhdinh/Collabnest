@@ -1,26 +1,64 @@
-import React from 'react';
-import {
-    Card, Row, Col, CardBody,
-    CardTitle, Input, Button, CardLink
-  } from 'reactstrap';
-import {Link} from "react-router-dom";
+import React, {useState} from 'react';
+
+import { makeStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Link from '@material-ui/core/Link';
+import Grid from '@material-ui/core/Grid';
+
+import {Link as RouterLink} from "react-router-dom";
 import {Helmet} from "react-helmet";
 import { createBrowserHistory } from 'history';
 import {FirebaseContext} from '../Components/Firebase';
 import NavBar from '../Components/NavBar';
 
+const useStyles = makeStyles(theme => ({
+    root: {
+        '& > *': {
+            margin: theme.spacing(1),
+        },
+        minWidth: 275,
+        flexGrow: 1,
+    },
+    paper: {
+        padding: theme.spacing(2),
+        textAlign: 'center',
+        color: theme.palette.text.secondary,
+    },
+}));
+  
+
 const SignIn = props => {
 
-    const checkUser = e => {
+    const classes = useStyles();
 
+    var [emailErr, setEmailErr] = useState(false);
+    var [emailErrMessage, setEmailErrMess] = useState("");
+
+    var [passErr, setPassErr] = useState(false);
+    var [passErrMessage, setPassErrMess] = useState("");
+
+    const resetErr = () => {
+        setEmailErr(false);
+        setEmailErrMess("");
+        setPassErr(false);
+        setPassErrMess("");
+    }
+
+    const checkUser = e => {
+    
         const email = document.getElementById('email').value;
         const pass = document.getElementById('pass').value;
 
         if (!email) {
-            document.getElementById("err-email").style.display = "block";
+            setEmailErr(true);
+            setEmailErrMess("Please enter your email");
             return false;
         } if (!pass) {
-            document.getElementById("err-pass").style.display = "block";
+            setPassErr(true);
+            setPassErrMess("Please enter your password");
             return false;
         }
 
@@ -29,27 +67,16 @@ const SignIn = props => {
             history.push('/');
         }).catch((error) => {
             // Handle Errors here.
-            alert(error.message);
+            if (error.code === 'auth/invalid-email' || error.code === 'auth/user-not-found') {
+                setEmailErr(true);
+                setEmailErrMess(error.message);
+            } else if (error.code === 'auth/wrong-password') {
+                setPassErr(true);
+                setPassErrMess(error.message);
+            } else {
+                alert(error.message);
+            }
         });
-
-        // var docRef = props.firebase.firestore.collection("users").doc(email);
-
-        // docRef.get().then((doc) => {
-        //     if (doc.exists) {
-        //         if (doc.data().pass === pass) {
-        //             localStorage.username = doc.data().username;
-        //             localStorage.pass = pass;
-        //             localStorage.email = email;
-        //         }
-        //         else {
-        //             alert("Sai mat khau");
-        //         }
-        //     } else {
-        //         alert("Tai khoan khong ton tai!");
-        //     }
-        // }).catch(function(error) {
-        //     console.log("Error getting document:", error);
-        // });
     }
 
     return (
@@ -60,29 +87,30 @@ const SignIn = props => {
             <NavBar></NavBar>
             <section className="banner">
                 {/* <img src={banner}/> */}
-                <div className="lgn-card">
-                    <Row>
-                        <Col md="4"></Col>
-                        <Col md="4">
-                            <Card>
-                                <CardBody className="auth-ls">
-                                    <CardTitle>Sign in to Collabnest</CardTitle>
-                                    <Input type="email" name="email" id="email" placeholder="Email"/>
-                                    <div id="err-email" className="cr-sn err-auth"><span>Please enter your email</span></div>
-                                    <Input type="password" name="pass" id="pass" placeholder="Password"/>
-                                    <div id="err-pass" className="cr-sn err-auth"><span>Please enter your password</span></div>
-                                    <div className="d-flex justify-content-center">
-                                       <Button onClick={checkUser} color='primary'>Sign in</Button>
-                                    </div>
-                                    <div className="cr-lgn">
-                                        <CardLink tag={Link} to="/signup">Create an Collabnest account</CardLink>
-                                    </div>
-                                </CardBody>
-                            </Card>
-                        </Col>
-                        <Col md="4"></Col>
-                    </Row>
-                </div>
+
+                <Grid container>
+                    <Grid item md={4}>
+                    </Grid>
+                    <Grid className="g1-lgn" item md={4}>
+                    <Card className={classes.root}>
+                    <CardContent className="auth-ls">
+                        <div className="card-title">Sign in to Collabnest</div>
+                        <form className={classes.root} noValidate autoComplete="off">
+                            <TextField error={emailErr} helperText={emailErrMessage} onChange={resetErr} fullWidth className="tf-clgn" type="email" name="email" id="email" label="Email" />
+                            <TextField error={passErr} helperText={passErrMessage} onChange={resetErr} fullWidth className="tf-clgn" type="password" name="pass" id="pass" label="Password" />
+                        </form>
+                        <div className="d-flex justify-content-center">
+                            <Button onClick={checkUser} variant="contained">Sign in</Button>
+                        </div>
+                        <div className="cr-lgn">
+                            <Link component={RouterLink} to="/signup">Create an Collabnest account</Link>
+                        </div>
+                    </CardContent>
+                    </Card>
+                    </Grid>
+                    <Grid item md={4}>
+                    </Grid>
+                </Grid>
             </section>
         </div>
     );
