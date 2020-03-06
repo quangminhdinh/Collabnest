@@ -22,6 +22,14 @@ a {
   font-size: 1rem !important;
 }
 
+.nav-ic {
+  color: #3a3a3a;
+}
+
+.ic-but {
+  border-radius: .5rem !important;
+}
+
 .bn12:hover {
   background-color: #D1ECFF !important;
 }
@@ -38,7 +46,7 @@ a {
 }
 
 .bn-cap {
-  
+  /* margin-top: 0; */
   padding-top: 11rem;
   text-align: center;
   color: #3a3a3a;
