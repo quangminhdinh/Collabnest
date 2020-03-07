@@ -112,6 +112,7 @@ const SignIn = props => {
                     </Grid>
                 </Grid>
             </section>
+            <footer className="f-int">© 2020 <a href="https://www.facebook.com/minh.dinh.112" rel="noopener noreferrer" target="_blank">Minh Dinh</a>, All rights reserved.</footer>
         </div>
     );
 }

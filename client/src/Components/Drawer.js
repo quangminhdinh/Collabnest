@@ -5,19 +5,24 @@ import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import MailIcon from '@material-ui/icons/Mail';
+import FindInPageIcon from '@material-ui/icons/FindInPage';
 import MenuIcon from '@material-ui/icons/Menu';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import SettingsIcon from '@material-ui/icons/Settings';
 import PersonIcon from '@material-ui/icons/Person';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import SearchIcon from '@material-ui/icons/Search';
+import AddIcon from '@material-ui/icons/Add';
+import ChatIcon from '@material-ui/icons/Chat';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles, useTheme, withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import Button from '@material-ui/core/Button';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
 import Paper from '@material-ui/core/Paper';
@@ -25,16 +30,88 @@ import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import Box from '@material-ui/core/Box';
-import logo from '../assets/img/v32.jpg';
+import Badge from '@material-ui/core/Badge';
+import Tooltip from '@material-ui/core/Tooltip';
+import TextField from '@material-ui/core/TextField';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import Avatar from '@material-ui/core/Avatar';
+import Fab from '@material-ui/core/Fab';
+import { deepOrange } from '@material-ui/core/colors';
+import logo from '../assets/img/TabLogo.png';
 import {Link as RouterLink} from 'react-router-dom';
 import Link from '@material-ui/core/Link';
+import {observer, FirebaseContext} from './Firebase';
+import { createBrowserHistory } from 'history';
+
 
 const drawerWidth = 240;
+
+const StyledBadge = withStyles(theme => ({
+  badge: {
+    backgroundColor: '#44b700',
+    color: '#44b700',
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    '&::after': {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      borderRadius: '50%',
+      animation: '$ripple 1.2s infinite ease-in-out',
+      border: '1px solid currentColor',
+      content: '""',
+    },
+  },
+  '@keyframes ripple': {
+    '0%': {
+      transform: 'scale(.8)',
+      opacity: 1,
+    },
+    '100%': {
+      transform: 'scale(2.4)',
+      opacity: 0,
+    },
+  },
+}))(Badge);
 
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexGrow: 1,
+  },
+  ava: {
+    color: theme.palette.getContrastText(deepOrange[500]),
+    backgroundColor: deepOrange[500],
+    width: theme.spacing(7),
+    height: theme.spacing(7),
+  },
+  liAva: {
+    justifyContent: "center",
+   },
+   avaIco: {
+    color: "rgba(255, 255, 255, 0.8)",
+   },
+   lIco: {
+    color: "#fff",
+   },
+   emp: {
+    padding: "0",
+    '&:hover': {
+      background: "#5475d1",
+   },
+   },
+   footer: {
+    [theme.breakpoints.up('md')]: {
+        width: `calc(100% - ${drawerWidth}px)`,
+        marginLeft: drawerWidth,
+      },
+   },
+   fab: {
+    position: 'absolute',
+    bottom: theme.spacing(10),
+    right: theme.spacing(10),
+    zIndex: 1200,
   },
   drawer: {
     [theme.breakpoints.up('md')]: {
@@ -61,7 +138,6 @@ const useStyles = makeStyles(theme => ({
     width: drawerWidth,
     backgroundColor: "#5475d1",
     color: "#fff",
-
   },
   content: {
     flexGrow: 1,
@@ -70,16 +146,38 @@ const useStyles = makeStyles(theme => ({
   title: {
     flexGrow: 1,
   },
+  liButton: {
+    '&:hover': {
+      background: "#3f66d1",
+   },
+   
+  }
 }));
 
 function ResponsiveDrawer(props) {
+  observer(props.firebase.auth, true, (user) => setDisplayName(user.displayName));
   const { container } = props;
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
+
+  var [displayName, setDisplayName] = React.useState("default");
+
+
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
+
+  const signOut = () => {
+    props.firebase.auth.signOut().then(function() {
+      // Sign-out successful.
+      const history = createBrowserHistory({forceRefresh: true});
+      history.push('/intro');
+    }).catch(function(error) {
+      // An error happened.
+      alert(error.message);
+    });
+  }
 
   const handleToggle = () => {
     setOpen(prevOpen => !prevOpen);
@@ -119,21 +217,56 @@ function ResponsiveDrawer(props) {
       <div className={classes.toolbar} />
       <Divider />
       <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon style={{ color: "#fff" }} /> : <MailIcon style={{ color: "#fff" }} />}</ListItemIcon>
-            <ListItemText primary={text} />
+        <ListItem style={{paddingTop: "1rem"}} className={classes.liAva}>
+
+        <StyledBadge
+          overlap="circle"
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          variant="dot"
+        >
+          <Avatar className={classes.ava}>{displayName.substr(0,1).toUpperCase()}</Avatar>
+        </StyledBadge>
+        
           </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon style={{ color: "#fff" }}/> : <MailIcon style={{ color: "#fff" }}/>}</ListItemIcon>
-            <ListItemText primary={text} />
+          <ListItem style={{paddingTop: "0"}} className={classes.liAva}>
+          <Typography variant="h6">
+          {displayName}
+        </Typography>
+
           </ListItem>
-        ))}
+
+          <ListItem style={{paddingTop: "0", paddingBottom: "2rem"}} className={classes.liAva}>
+          <Tooltip title="Profile">
+          <IconButton className={classes.emp}>
+          <PersonIcon fontSize="small" className={classes.avaIco}/>
+          </IconButton></Tooltip>
+
+          <Box px={2}>
+          <Tooltip title="Settings">
+          <IconButton className={classes.emp}>
+          <SettingsIcon fontSize="small" className={classes.avaIco}/>
+          </IconButton></Tooltip></Box>
+
+          <Tooltip title="Log out">
+          <IconButton onClick={signOut} className={classes.emp}>
+          <ExitToAppIcon fontSize="small" className={classes.avaIco}/>
+          </IconButton></Tooltip>
+
+          </ListItem>
+
+          <Divider light/>
+        
+          <ListItem className={classes.liButton} button key="home">
+            <ListItemIcon><DashboardIcon className={classes.lIco}/></ListItemIcon>
+            <ListItemText primary="My projects" />
+          </ListItem>
+          <ListItem className={classes.liButton} button key="explore">
+            <ListItemIcon><FindInPageIcon className={classes.lIco}/></ListItemIcon>
+            <ListItemText primary="Explore" />
+          </ListItem>
       </List>
     </div>
   );
@@ -156,13 +289,44 @@ function ResponsiveDrawer(props) {
           </IconButton>
           {/* <Typography variant="h6" noWrap> */}
           
-          <Box p={1} className={classes.title}>
+          <Box p={2} className={classes.title}>
             <Link component={RouterLink} to="/">
-                <img height='40px' src={logo} alt="logo"/> <span className="bn-lgo align-middle">Collabnest</span>
-            </Link></Box>
+                <img height='30px' src={logo} alt="logo"/> 
+                {/* <span className="bn-lgo align-middle">Collabnest</span> */}
+            </Link>
+            </Box>
+            <Box py={2}>
+            <TextField type="search" placeholder="Search"  InputProps={{
+                    startAdornment: <InputAdornment position="start"><SearchIcon color="disabled"/></InputAdornment>,
+                  }} /></Box>
             <Box p={1} alignItems="center">
             {/* <PersonIcon/> */}
             
+            <Tooltip title="Messages">
+                <IconButton
+                    className="ic-but"
+                ><Badge badgeContent={2} color="primary" className="clpr-badge">
+                <ChatIcon className="nav-ic"/>
+                </Badge>
+                </IconButton></Tooltip>
+
+                <Tooltip title="Notifications">
+                <IconButton
+                    className="ic-but"
+                >
+                  <Badge badgeContent={4} color="secondary">
+                     <NotificationsIcon className="nav-ic"/>
+                  </Badge>
+                </IconButton></Tooltip>
+
+                <Tooltip title="Create new project">
+                <IconButton
+                    className="ic-but"
+                >
+                <AddIcon className="nav-ic"/>
+                </IconButton></Tooltip>
+
+                <Tooltip title="Profile">
                 <IconButton
                     className="ic-but"
                     ref={anchorRef}
@@ -171,7 +335,7 @@ function ResponsiveDrawer(props) {
                     onClick={handleToggle}
                 >
                 <PersonIcon className="nav-ic"/>
-                </IconButton>
+                </IconButton></Tooltip>
                 <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
                 {({ TransitionProps, placement }) => (
                     <Grow
@@ -184,7 +348,7 @@ function ResponsiveDrawer(props) {
                             <MenuItem component={RouterLink} to="/signin">Profile</MenuItem>
                             <MenuItem component={RouterLink} to="/signin">Settings</MenuItem>
                             <Divider/>
-                            <MenuItem component={RouterLink} to="/signin">Log out</MenuItem>
+                            <MenuItem onClick={signOut}>Log out</MenuItem>
                         </MenuList>
                         </ClickAwayListener>
                     </Paper>
@@ -229,12 +393,23 @@ function ResponsiveDrawer(props) {
       </nav>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        <Typography paragraph>
-          Lorem 
-        </Typography>
+        {props.children}
+        <Tooltip title="Create new project">
+        <Fab color="primary" className={classes.fab} aria-label="Create new project">
+          <AddIcon />
+        </Fab></Tooltip>
+        <footer className={classes.footer}>© 2020 <a href="https://www.facebook.com/minh.dinh.112" rel="noopener noreferrer" target="_blank">Minh Dinh</a>, All rights reserved.</footer>
       </main>
     </div>
   );
 }
 
-export default ResponsiveDrawer;
+const DrawerFbConsumer = props => (
+  <div>
+      <FirebaseContext.Consumer>
+        {firebase => <ResponsiveDrawer firebase={firebase} >{props.children}</ResponsiveDrawer>}
+      </FirebaseContext.Consumer>
+  </div>
+);
+
+export default DrawerFbConsumer;

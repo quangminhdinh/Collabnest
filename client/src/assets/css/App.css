@@ -1,9 +1,23 @@
 body {
-  font-family: Montserrat, sans-serif;
+  font-family: Montserrat, sans-serif !important;
 }
 
 a {
   text-decoration: none !important;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 2rem;
+  background-color: #fff;
+  display: block;
+}
+
+.f-int {
+  position: static;
+  /* width: 100%; */
 }
 
 .bn-lgo {
@@ -22,12 +36,17 @@ a {
   font-size: 1rem !important;
 }
 
+.clpr-badge  > .MuiBadge-colorPrimary {
+  background-color: #2196F3;
+}
+
 .nav-ic {
   color: #3a3a3a;
 }
 
 .ic-but {
   border-radius: .5rem !important;
+  margin-left: .1rem !important;
 }
 
 .bn12:hover {
@@ -47,12 +66,21 @@ a {
 
 .bn-cap {
   /* margin-top: 0; */
-  padding-top: 11rem;
+  /* padding-top: 11rem;
   text-align: center;
   color: #3a3a3a;
   font-size: 7rem;
   font-weight: 600;
-  letter-spacing: .3rem;
+  letter-spacing: .3rem; */
+  position: relative;
+  left: -50%;
+  height: 100px;
+}
+
+.bn-capln {
+  position: absolute;
+  left: 50%;
+  top: 16rem;
 }
 
 .bn-but {
