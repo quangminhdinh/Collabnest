@@ -10,8 +10,7 @@ import Grid from '@material-ui/core/Grid';
 
 import {Link as RouterLink} from "react-router-dom";
 import {Helmet} from "react-helmet";
-import { createBrowserHistory } from 'history';
-import {FirebaseContext} from '../Components/Firebase';
+import {observer, FirebaseContext} from '../Components/Firebase';
 import NavBar from '../Components/NavBar';
 
 const useStyles = makeStyles(theme => ({
@@ -31,6 +30,7 @@ const useStyles = makeStyles(theme => ({
   
 
 const SignIn = props => {
+    observer(props.firebase.auth, false);
 
     const classes = useStyles();
 
@@ -62,10 +62,7 @@ const SignIn = props => {
             return false;
         }
 
-        props.firebase.auth.signInWithEmailAndPassword(email, pass).then(authVal => {
-            const history = createBrowserHistory({forceRefresh: true});
-            history.push('/');
-        }).catch((error) => {
+        props.firebase.auth.signInWithEmailAndPassword(email, pass).catch((error) => {
             // Handle Errors here.
             if (error.code === 'auth/invalid-email' || error.code === 'auth/user-not-found') {
                 setEmailErr(true);
@@ -84,7 +81,7 @@ const SignIn = props => {
             <Helmet>
                 <title>Sign in - Collabnest</title>
             </Helmet>
-            <NavBar>
+            <NavBar isSignUp={false}>
                 {/* <img src={banner}/> */}
 
                 <Grid container>

@@ -14,6 +14,9 @@ import { createBrowserHistory } from 'history';
 import {FirebaseContext} from '../Components/Firebase';
 import NavBar from '../Components/NavBar';
 
+
+var procs = false;
+
 const useStyles = makeStyles(theme => ({
     root: {
         '& > *': {
@@ -30,6 +33,22 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const SignUp = props => {
+
+    props.firebase.auth.onAuthStateChanged(function(user) {
+        if (user) {
+            // User is signed in.
+            if (procs) {
+                return;
+            } else {
+                const history = createBrowserHistory({
+                    forceRefresh: true
+                });
+                history.push('/');
+            }
+        }
+    });
+
+
     const classes = useStyles();
 
     var [emailErr, setEmailErr] = useState(false);
@@ -95,19 +114,33 @@ const SignUp = props => {
         if (validateUser(email, username, pass, cfp)) {
             return false;
         }
-
+        procs = true;
         props.firebase.auth.createUserWithEmailAndPassword(email, pass).then((authData) => {
-            const user = props.firebase.auth.currentUser;
-            user.updateProfile({
-                displayName: username
-            }).then(function() {
-                // Update successful.
-                const history = createBrowserHistory({forceRefresh: true});
-                history.push('/');
+            const userId = props.firebase.auth.currentUser.uid;
+            var docRef = props.firebase.firestore.collection("users").doc(userId);
+            // alert(procs);
+            docRef.get().then((doc) => {
+                if (doc.exists) {
+                    alert("Error");
+                } else {
+                    docRef.set({
+                        displayName : username,
+                        email: email
+                    }, {merge: true})
+                    .then(function() {
+                        console.log("Document successfully written!");
+                        // const history = createBrowserHistory({forceRefresh: true});
+                        // history.push('/');
+                        procs = false;
+                    })
+                    .catch(function(error) {
+                        console.error("Error writing document: ", error);
+                    });
+                }
             }).catch(function(error) {
-                // An error happened.
-                alert(error.code);
+                console.log("Error getting document:", error);
             });
+
         }).catch((error) => {
             // Handle Errors here.
             // alert(error.message);
@@ -127,7 +160,7 @@ const SignUp = props => {
             <Helmet>
                 <title>Sign Up - Collabnest</title>
             </Helmet>
-            <NavBar>
+            <NavBar isSignUp={true}>
                 {/* <img src={banner}/> */}
 
 
@@ -146,7 +179,7 @@ const SignUp = props => {
                             <TextField error={cfPassErr} helperText={cfPassErrMessage} onChange={resetErr} fullWidth className="tf-clgn" type="password" name="confirmPassword" id="confirmPassword" label="Confirm password" />
                         </form>
                         <div className="d-flex justify-content-center">
-                            <Button onClick={addUser} variant="contained">Sign in</Button>
+                            <Button onClick={addUser} variant="contained">Sign up</Button>
                         </div>
                         <div className="cr-lgn">
                             <Link component={RouterLink} to="/signin">Log in to existing account</Link>

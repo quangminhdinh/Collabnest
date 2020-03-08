@@ -155,7 +155,21 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ResponsiveDrawer(props) {
-  observer(props.firebase.auth, true, (user) => setUser(user));
+  observer(props.firebase.auth, true, (user) => {
+    // setUser(user);
+    // console.log(user);
+    props.firebase.firestore.collection("users").doc(user.uid).get().then(function(doc) {
+        if (doc.exists) {
+            setUser(doc.data());
+        } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+        }
+    }).catch(function(error) {
+        console.log("Error getting document:", error);
+    });
+
+  });
   const { container } = props;
   const classes = useStyles();
   const theme = useTheme();

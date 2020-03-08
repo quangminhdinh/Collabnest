@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import {Helmet} from "react-helmet";
 import logo from '../assets/img/3.png';
 import NavBar from '../Components/NavBar';
+import {observer, FirebaseContext} from '../Components/Firebase';
 // import banner from '../assets/img/v2.jpg';
 
 const useStyles = makeStyles(theme => ({
@@ -14,13 +15,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Intr = props => {
+    observer(props.firebase.auth, false);
     const classes = useStyles();
     return (
         <div>
             <Helmet>
                 <title>Collabnest</title>
             </Helmet>
-            <NavBar>
+            <NavBar isSignUp={false}>
             
                 {/* <img src={banner}/> */}
                 {/* <h1 className="bn-cap">CollabNest</h1> */}
@@ -36,4 +38,13 @@ const Intr = props => {
 
 }
 
-export default Intr;
+
+const IntroFbConsumer = () => (
+    <div>
+        <FirebaseContext.Consumer>
+            {firebase => <Intr firebase={firebase} />}
+        </FirebaseContext.Consumer>
+    </div>
+);
+
+export default IntroFbConsumer;

@@ -8,7 +8,7 @@ import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import logo from '../assets/img/TabLogo.png';
-import {observer, FirebaseContext} from './Firebase';
+import {FirebaseContext} from './Firebase';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -23,7 +23,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const NavBar = props => {
-    observer(props.firebase.auth, false);
     const classes1 = useStyles();
     return (
       <React.Fragment>

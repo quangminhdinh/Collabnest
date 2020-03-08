@@ -7,9 +7,13 @@ const Profile = props => {
 
     const canvas = user => {
         return (
+            <React.Fragment>
             <Helmet>
                 <title>{user.displayName} - Collabnest</title>
             </Helmet>
+            {user.email
+            }
+            </React.Fragment>
         );
     };
 
