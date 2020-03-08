@@ -20,8 +20,8 @@ const Intr = props => {
             <Helmet>
                 <title>Collabnest</title>
             </Helmet>
-            <NavBar></NavBar>
-            <section className="banner">
+            <NavBar>
+            
                 {/* <img src={banner}/> */}
                 {/* <h1 className="bn-cap">CollabNest</h1> */}
                 <div className="bn-capln">
@@ -30,8 +30,7 @@ const Intr = props => {
                 <div className="bn-but">
                     <Button className={classes.margin} variant="contained" color="primary" size="large" component={RouterLink} to="/signin">Get started</Button>
                 </div>
-            </section>
-            <footer className="f-int">© 2020 <a href="https://www.facebook.com/minh.dinh.112" rel="noopener noreferrer" target="_blank">Minh Dinh</a>, All rights reserved.</footer>
+            </NavBar>
         </div>
     );
 

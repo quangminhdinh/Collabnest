@@ -155,14 +155,16 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ResponsiveDrawer(props) {
-  observer(props.firebase.auth, true, (user) => setDisplayName(user.displayName));
+  observer(props.firebase.auth, true, (user) => setUser(user));
   const { container } = props;
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
+  const history = createBrowserHistory({forceRefresh: true});
 
-  var [displayName, setDisplayName] = React.useState("default");
+
+  var [user, setUser] = React.useState({displayName: "default"});
 
 
   const [open, setOpen] = React.useState(false);
@@ -171,7 +173,6 @@ function ResponsiveDrawer(props) {
   const signOut = () => {
     props.firebase.auth.signOut().then(function() {
       // Sign-out successful.
-      const history = createBrowserHistory({forceRefresh: true});
       history.push('/intro');
     }).catch(function(error) {
       // An error happened.
@@ -227,20 +228,20 @@ function ResponsiveDrawer(props) {
           }}
           variant="dot"
         >
-          <Avatar className={classes.ava}>{displayName.substr(0,1).toUpperCase()}</Avatar>
+          <Avatar className={classes.ava}>{user.displayName.substr(0,1).toUpperCase()}</Avatar>
         </StyledBadge>
         
           </ListItem>
           <ListItem style={{paddingTop: "0"}} className={classes.liAva}>
           <Typography variant="h6">
-          {displayName}
+          {user.displayName}
         </Typography>
 
           </ListItem>
 
           <ListItem style={{paddingTop: "0", paddingBottom: "2rem"}} className={classes.liAva}>
           <Tooltip title="Profile">
-          <IconButton className={classes.emp}>
+          <IconButton component={RouterLink} to="/profile" className={classes.emp}>
           <PersonIcon fontSize="small" className={classes.avaIco}/>
           </IconButton></Tooltip>
 
@@ -345,7 +346,7 @@ function ResponsiveDrawer(props) {
                     <Paper>
                         <ClickAwayListener onClickAway={handleClose}>
                         <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                            <MenuItem component={RouterLink} to="/signin">Profile</MenuItem>
+                            <MenuItem component={RouterLink} to="/profile">Profile</MenuItem>
                             <MenuItem component={RouterLink} to="/signin">Settings</MenuItem>
                             <Divider/>
                             <MenuItem onClick={signOut}>Log out</MenuItem>
@@ -393,7 +394,7 @@ function ResponsiveDrawer(props) {
       </nav>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        {props.children}
+        {props.children(user)}
         <Tooltip title="Create new project">
         <Fab color="primary" className={classes.fab} aria-label="Create new project">
           <AddIcon />

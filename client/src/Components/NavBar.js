@@ -26,6 +26,7 @@ const NavBar = props => {
     observer(props.firebase.auth, false);
     const classes1 = useStyles();
     return (
+      <React.Fragment>
         <div className={classes1.root}>
         <AppBar color="transparent" position="static">
             <Container>
@@ -42,13 +43,18 @@ const NavBar = props => {
             </Container>
         </AppBar>
         </div>
+        <section className="banner">
+          {props.children}
+        </section>
+          <footer className="f-int">© 2020 <a href="https://www.facebook.com/minh.dinh.112" rel="noopener noreferrer" target="_blank">Minh Dinh</a>, All rights reserved.</footer>
+      </React.Fragment>
     );
 }
 
 const NavBarFbConsumer = props => (
   <div>
       <FirebaseContext.Consumer>
-        {firebase => <NavBar firebase={firebase}/>}
+{firebase => <NavBar firebase={firebase}>{props.children}</NavBar>}
       </FirebaseContext.Consumer>
   </div>
 );

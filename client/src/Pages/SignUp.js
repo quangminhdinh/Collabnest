@@ -127,8 +127,7 @@ const SignUp = props => {
             <Helmet>
                 <title>Sign Up - Collabnest</title>
             </Helmet>
-            <NavBar></NavBar>
-            <section className="banner">
+            <NavBar>
                 {/* <img src={banner}/> */}
 
 
@@ -197,8 +196,7 @@ const SignUp = props => {
                         <Col md="4"></Col>
                     </Row>
                 </div> */}
-            </section>
-            <footer className="f-int">© 2020 <a href="https://www.facebook.com/minh.dinh.112" rel="noopener noreferrer" target="_blank">Minh Dinh</a>, All rights reserved.</footer>
+            </NavBar>
         </div>
     );
 }

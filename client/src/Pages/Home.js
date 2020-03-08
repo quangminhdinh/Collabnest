@@ -9,7 +9,7 @@ const Home = props => {
             <Helmet>
                 <title>Home - Collabnest</title>
             </Helmet>
-            <Drawer></Drawer>
+         <Drawer>{a => ""}</Drawer>
         </div>
     );
 }
