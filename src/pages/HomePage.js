@@ -5,15 +5,12 @@ import {AuthUserContext} from '../components/Session';
 
 const HomePage = () => (
   <AuthUserContext.Consumer>
-    {authUser => {
-        if (authUser !== "init") {
-          if (authUser) {
-            return (<Home authUser={authUser}/>);
-          } else {
-            return (<Landing/>);
-          }
-        }
-      }
+    {authUser => 
+      authUser ? (
+        <Home authUser={authUser}/>
+      ) : (
+        <Landing/>
+      )
     }
   </AuthUserContext.Consumer>
 );

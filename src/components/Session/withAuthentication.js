@@ -9,7 +9,7 @@ const withAuthentication = Component => {
       super(props);
 
       this.state = {
-        authUser: "init",
+        authUser: JSON.parse(localStorage.getItem('authUser')),
       };
     }
 

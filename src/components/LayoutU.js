@@ -6,7 +6,7 @@ import { makeStyles, useTheme, withStyles,
           List, ListItem, ListItemText, MenuItem, MenuList, ListItemIcon } from '@material-ui/core';
 import { FindInPage as FindInPageIcon, Menu as MenuIcon, Notifications as NotificationsIcon, Settings as SettingsIcon, 
           Person as PersonIcon, ExitToApp as ExitToAppIcon, Search as SearchIcon, Add as AddIcon, Chat as ChatIcon, 
-          Dashboard as DashboardIcon } from '@material-ui/icons';
+          Dashboard as DashboardIcon, AddCircle as AddCircleIcon } from '@material-ui/icons';
 import { deepOrange } from '@material-ui/core/colors';
 
 import {Link as RouterLink} from 'react-router-dom';
@@ -186,7 +186,7 @@ function Layout(props) {
 
             <ListItem style={{paddingTop: "0", paddingBottom: "2rem"}} className={classes.liAva}>
                 <Tooltip title="Profile">
-                    <IconButton component={RouterLink} to="#" className={classes.emp}>
+                    <IconButton component={RouterLink} to={ROUTES.PROFILE} className={classes.emp}>
                         <PersonIcon fontSize="small" className={classes.avaIco}/>
                     </IconButton>
                 </Tooltip>
@@ -208,7 +208,11 @@ function Layout(props) {
 
             <Divider light/>
             
-            <ListItem className={classes.liButton} button key="home">
+            <ListItem component={RouterLink} to="#" className={classes.liButton} button key="new_prj">
+                <ListItemIcon><AddCircleIcon className={classes.lIco}/></ListItemIcon>
+                <ListItemText primary="New project" />
+            </ListItem>
+            <ListItem component={RouterLink} to={ROUTES.HOME} className={classes.liButton} button key="home">
                 <ListItemIcon><DashboardIcon className={classes.lIco}/></ListItemIcon>
                 <ListItemText primary="My projects" />
             </ListItem>
@@ -273,7 +277,7 @@ function Layout(props) {
                             </IconButton>
                         </Tooltip>
 
-                        <Tooltip title="Profile">
+                        {/* <Tooltip title="Menu"> */}
                             <IconButton className="ic-but"
                                         ref={anchorRef}
                                         aria-controls={open ? 'menu-list-grow' : undefined}
@@ -281,7 +285,7 @@ function Layout(props) {
                                         onClick={handleToggle}>
                             <PersonIcon className="nav-ic"/>
                             </IconButton>
-                        </Tooltip>
+                        {/* </Tooltip> */}
                         <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
                             {({ TransitionProps, placement }) => (
                                 <Grow
@@ -290,7 +294,7 @@ function Layout(props) {
                                     <Paper>
                                         <ClickAwayListener onClickAway={handleClose}>
                                         <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                                            <MenuItem className="clr-dark-pop" component={RouterLink} to="#">Profile</MenuItem>
+                                            <MenuItem className="clr-dark-pop" component={RouterLink} to={ROUTES.PROFILE}>Profile</MenuItem>
                                             <MenuItem className="clr-dark-pop" component={RouterLink} to="#">Settings</MenuItem>
                                             <Divider/>
                                             <MenuItem onClick={props.firebase.doSignOut}>Log out</MenuItem>
@@ -335,9 +339,11 @@ function Layout(props) {
       <main className={classes.content}>
         <div className={classes.toolbar} />
         {props.children}
-        <Tooltip title="Create new project">
-            <Fab color="primary" className={classes.fab} aria-label="Create new project"><AddIcon /></Fab>
-        </Tooltip>
+        <Box display={props.fabDisplay ? "inline-flex" : "none"}>
+          <Tooltip  title="Create new project">
+              <Fab color="primary" className={classes.fab} aria-label="Create new project"><AddIcon /></Fab>
+          </Tooltip>
+        </Box>
         <footer className={classes.footer}>© 2020 <a href="https://www.facebook.com/minh.dinh.112" rel="noopener noreferrer" target="_blank">Minh Dinh</a>, All rights reserved.</footer>
       </main>
     </div>
