@@ -53,6 +53,12 @@ class SignIn extends Component {
         });
     }
 
+    onKeyDown = e => {
+        if (e.key === 'Enter') {
+            this.onSubmit();
+        }
+    }
+
     onSubmit = () => {
         const { email, pass } = this.state;
         // Handle
@@ -102,7 +108,8 @@ class SignIn extends Component {
                                         type="email" 
                                         name="email" 
                                         value={email} 
-                                        label="Email" />
+                                        label="Email"
+                                        onKeyDown={isInvalid ? null : this.onKeyDown} />
                             <TextField error={!!passError} 
                                         helperText={passError} 
                                         onChange={this.onChange} 
@@ -111,7 +118,8 @@ class SignIn extends Component {
                                         type="password" 
                                         name="pass" 
                                         value={pass} 
-                                        label="Password" />
+                                        label="Password" 
+                                        onKeyDown={isInvalid ? null : this.onKeyDown} />
                         </form>
                         <div className="d-flex justify-content-center">
                             <Button disabled={isInvalid} onClick={this.onSubmit} variant="contained">Sign in</Button>

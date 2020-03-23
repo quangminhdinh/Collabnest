@@ -7,18 +7,24 @@ a {
 }
 
 footer {
-  position: absolute;
+  /* position: absolute;
   bottom: 0;
-  left: 0;
+  left: 0; */
   padding: 2rem;
   background-color: #fff;
   display: block;
+  position: static;
 }
 
-.f-int {
-  position: static;
-  /* width: 100%; */
+.wrp-content {
+  flex: 1;
 }
+
+/* .wrp {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+} */
 
 .bn-lgo {
   margin-left: .3rem;

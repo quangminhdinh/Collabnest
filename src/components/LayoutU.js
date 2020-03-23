@@ -73,10 +73,12 @@ const useStyles = makeStyles(theme => ({
    },
   },
   footer: {
-    [theme.breakpoints.up('md')]: {
-      width: `calc(100% - ${drawerWidth}px)`,
-      marginLeft: drawerWidth,
-    },
+    // [theme.breakpoints.up('md')]: {
+    //   width: `calc(100% - ${drawerWidth}px)`,
+    //   marginLeft: drawerWidth,
+    // },
+    margin: theme.spacing(-3),
+    marginTop: theme.spacing(0)
   },
   fab: {
     position: 'absolute',
@@ -113,6 +115,9 @@ const useStyles = makeStyles(theme => ({
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
+    display: "flex",
+    minHeight: "100vh",
+    flexDirection: 'column'
   },
   title: {
     flexGrow: 1,
@@ -337,13 +342,14 @@ function Layout(props) {
         </Hidden>
       </nav>
       <main className={classes.content}>
+        <Box className="wrp-content">
         <div className={classes.toolbar} />
         {props.children}
         <Box display={props.fabDisplay ? "inline-flex" : "none"}>
           <Tooltip  title="Create new project">
               <Fab color="primary" className={classes.fab} aria-label="Create new project"><AddIcon /></Fab>
           </Tooltip>
-        </Box>
+        </Box></Box>
         <footer className={classes.footer}>© 2020 <a href="https://www.facebook.com/minh.dinh.112" rel="noopener noreferrer" target="_blank">Minh Dinh</a>, All rights reserved.</footer>
       </main>
     </div>

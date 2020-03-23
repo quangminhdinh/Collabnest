@@ -60,6 +60,12 @@ class SignUp extends Component {
         });
     }
 
+    onKeyDown = e => {
+        if (e.key === 'Enter') {
+            this.onSubmit();
+        }
+    }
+
     onSubmit = () => {
         const { username, email, pass, confirmPass, isAdmin } = this.state;
 
@@ -132,7 +138,8 @@ class SignUp extends Component {
                                         type="text" 
                                         name="username" 
                                         value={username} 
-                                        label="Username" />
+                                        label="Username"
+                                        onKeyDown={isInvalid ? null : this.onKeyDown} />
                             <TextField error={!!emailError} 
                                         helperText={emailError} 
                                         onChange={this.onChange} 
@@ -141,7 +148,8 @@ class SignUp extends Component {
                                         type="email" 
                                         name="email" 
                                         value={email} 
-                                        label="Email" />
+                                        label="Email"
+                                        onKeyDown={isInvalid ? null : this.onKeyDown} />
                             <TextField error={!!passError} 
                                         helperText={passError} 
                                         onChange={this.onChange} 
@@ -150,7 +158,8 @@ class SignUp extends Component {
                                         type="password" 
                                         name="pass" 
                                         value={pass} 
-                                        label="Password" />
+                                        label="Password"
+                                        onKeyDown={isInvalid ? null : this.onKeyDown} />
                             <TextField error={!!confirmPassError} 
                                         helperText={confirmPassError} 
                                         onChange={this.onChange} 
@@ -159,7 +168,8 @@ class SignUp extends Component {
                                         type="password" 
                                         name="confirmPass" 
                                         value={confirmPass} 
-                                        label="Confirm password" />
+                                        label="Confirm password"
+                                        onKeyDown={isInvalid ? null : this.onKeyDown} />
                         </form>
                         <div className="d-flex justify-content-center">
                             <Button disabled={isInvalid} onClick={this.onSubmit} variant="contained">Sign up</Button>
