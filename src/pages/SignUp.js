@@ -10,6 +10,7 @@ import Layout from '../components/LayoutN';
 import * as ROUTES from '../components/constants/routes';
 
 import {withFirebase} from '../components/Firebase';
+import {randomColor} from '../components/utils/stringToColor';
 
 const styles = theme => ({
     root: {
@@ -85,11 +86,13 @@ class SignUp extends Component {
             .doCreateUserWithEmailAndPassword(email, pass)
             .then(authUser => {
                 // Create a user in your Firebase realtime database
+                const avaColor = randomColor();
                 return this.props.firebase.user(authUser.user.uid).set(
                 {
                     username,
                     email,
                     isAdmin,
+                    avaColor
                 },
                 { merge: true },
                 );

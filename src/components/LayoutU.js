@@ -7,7 +7,6 @@ import { makeStyles, useTheme, withStyles,
 import { FindInPage as FindInPageIcon, Menu as MenuIcon, Notifications as NotificationsIcon, Settings as SettingsIcon, 
           Person as PersonIcon, ExitToApp as ExitToAppIcon, Search as SearchIcon, Add as AddIcon, Chat as ChatIcon, 
           Dashboard as DashboardIcon, AddCircle as AddCircleIcon } from '@material-ui/icons';
-import { deepOrange } from '@material-ui/core/colors';
 
 import {Link as RouterLink} from 'react-router-dom';
 import Link from '@material-ui/core/Link';
@@ -52,8 +51,8 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
   },
   ava: {
-    color: theme.palette.getContrastText(deepOrange[500]),
-    backgroundColor: deepOrange[500],
+    // color: theme.palette.getContrastText(deepOrange[500]),
+    // backgroundColor: deepOrange[500],
     width: theme.spacing(7),
     height: theme.spacing(7),
   },
@@ -133,6 +132,7 @@ function Layout(props) {
   const { container, authUser } = props;
   const classes = useStyles();
   const theme = useTheme();
+
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const [open, setOpen] = React.useState(false);
@@ -181,7 +181,7 @@ function Layout(props) {
                                     horizontal: 'right',
                                 }}
                                 variant="dot">
-                    <Avatar className={classes.ava}>{authUser.username.substr(0,1).toUpperCase()}</Avatar>
+                    <Avatar style={{backgroundColor: authUser.avaColor, color: theme.palette.getContrastText(authUser.avaColor)}} className={classes.ava}>{authUser.username.substr(0,1).toUpperCase()}</Avatar>
                 </StyledBadge>
             </ListItem>
             
