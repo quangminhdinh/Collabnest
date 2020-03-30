@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { compose } from 'recompose';
-import {withFirebase} from './Firebase';
+// import {withFirebase} from './Firebase';
 // import { withRouter } from 'react-router-dom';
 
 import { withStyles, Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Box, Chip, Slider } from '@material-ui/core';
@@ -140,6 +140,31 @@ class EditProfile extends Component {
         this.setState({ open: false});
     }
 
+    onFileUpload = event => {
+        if (!event || !event.target || !event.target.files || event.target.files.length === 0) {
+            return;
+        }
+        const name = event.target.files[0].name;
+        const lastDot = name.lastIndexOf('.');
+        const ext = name.substring(lastDot);
+
+        this.props.firebase
+            .upload('users/cv/' + this.props.authUser.uid + ext, 
+                    event.target.files[0],
+                    () => {
+                        this.props.firebase.user(this.props.authUser.uid).set({cvExt: ext}, { merge: true })
+                            .then(() => {
+                                this.setState({
+                                    dialogStatus: 'Success',
+                                    dialogContent: 'Your CV has been updated',
+                                    dialogForm: false,
+                                    open: true
+                                })
+                            })
+                            .catch(error => {alert(error)});
+                    }, error => {alert(error)});
+    }
+
     render() {
         const { classes } = this.props;
         const { username, company, position, phone, address, bio, skills, website, usernameError, open, dialogContent, dialogStatus, dialogForm, tempSkillName, tempSkillValue } = this.state;
@@ -229,6 +254,15 @@ class EditProfile extends Component {
                         ))}
                     </Box>
                     <Box mt={2} className="d-flex justify-content-center">
+                        <Button component="label" color="secondary" size="large" variant="contained">
+                            Upload CV
+                            <input
+                                type="file"
+                                onChange={this.onFileUpload}
+                                style={{ display: "none" }}
+                            />
+                        </Button>
+                        <Box display="inline-block" pl={1} />
                         <Button disabled={isInvalid} color="primary" size="large" onClick={this.onSubmit} variant="contained">Update profile</Button>
                     </Box>
                 </Box>
@@ -283,5 +317,4 @@ class EditProfile extends Component {
 export default compose(
     // withRouter,
     withStyles(styles),
-    withFirebase
 )(EditProfile);

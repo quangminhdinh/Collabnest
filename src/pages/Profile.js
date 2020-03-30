@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { withStyles, withTheme, Grid, Typography, Box, Card, CardContent, Avatar, Tooltip, LinearProgress, IconButton, Tabs, Tab, Divider, lighten } from '@material-ui/core';
+import { withStyles, withTheme, Grid, Typography, Box, Card, CardContent, Button, Avatar, Tooltip, LinearProgress, IconButton, Tabs, Tab, Divider, lighten } from '@material-ui/core';
 import { deepOrange } from '@material-ui/core/colors';
 import { Group as GroupIcon, LibraryBooks as LibraryBooksIcon } from '@material-ui/icons';
 import PropTypes from 'prop-types';
@@ -95,16 +95,22 @@ class Profile extends Component {
         super(props);
         this.state = { 
             tabVal: 0,
-            avaURL: null
+            avaURL: null,
+            cvURL: null
         };
     }
 
     componentDidMount() {
-        const {uid, avaExt} = this.props.authUser;
+        const {uid, avaExt, cvExt} = this.props.authUser;
         if (avaExt) {
             this.props.firebase
                 .getURL('users/ava/' + uid + '_200x200' + avaExt)
                 .then(url => {this.setState({ avaURL: url })})
+                .catch(error => {alert(error.code)});
+        } if (cvExt) {
+            this.props.firebase
+                .getURL('users/cv/' + uid + cvExt)
+                .then(url => {this.setState({ cvURL: url })})
                 .catch(error => {alert(error.code)});
         }
     }
@@ -128,8 +134,8 @@ class Profile extends Component {
     }
 
     render() {
-        const { classes, authUser, theme } = this.props;
-        const { avaURL } = this.state;
+        const { classes, authUser, theme, firebase } = this.props;
+        const { avaURL, cvURL } = this.state;
 
         return (
             <Layout avaURL={avaURL} authUser={authUser}>
@@ -267,9 +273,12 @@ class Profile extends Component {
                                                 </Box>
                                             )) : null}
                                         </Box>
+                                        <Box mt={2} className="d-flex justify-content-center">
+                                            {cvURL ? <Button color="primary" href={cvURL} size="large" variant="contained">Download CV</Button> : null}
+                                        </Box>
                                     </TabPanel>
                                     <TabPanel value={this.state.tabVal} index={1}>
-                                        <EditProfile authUser={authUser} />
+                                        <EditProfile authUser={authUser} firebase={firebase}/>
                                     </TabPanel>
                                 </Box>
                             </Card>
