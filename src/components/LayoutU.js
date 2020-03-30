@@ -129,7 +129,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function Layout(props) {
-  const { container, authUser } = props;
+  const { container, authUser, avaURL } = props;
   const classes = useStyles();
   const theme = useTheme();
 
@@ -181,7 +181,8 @@ function Layout(props) {
                                     horizontal: 'right',
                                 }}
                                 variant="dot">
-                    <Avatar style={{backgroundColor: authUser.avaColor, color: theme.palette.getContrastText(authUser.avaColor)}} className={classes.ava}>{authUser.username.substr(0,1).toUpperCase()}</Avatar>
+                    {avaURL ? <Avatar className={classes.ava} alt="ava" src={avaURL} /> : 
+                              <Avatar style={{backgroundColor: authUser.avaColor, color: theme.palette.getContrastText(authUser.avaColor)}} className={classes.ava}>{authUser.username.substr(0,1).toUpperCase()}</Avatar> }
                 </StyledBadge>
             </ListItem>
             

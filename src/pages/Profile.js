@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { withStyles, withTheme, Grid, Typography, Box, Card, CardContent, Avatar, Tooltip, LinearProgress, Tabs, Tab, Divider, lighten } from '@material-ui/core';
+import { withStyles, withTheme, Grid, Typography, Box, Card, CardContent, Avatar, Tooltip, LinearProgress, IconButton, Tabs, Tab, Divider, lighten } from '@material-ui/core';
 import { deepOrange } from '@material-ui/core/colors';
 import { Group as GroupIcon, LibraryBooks as LibraryBooksIcon } from '@material-ui/icons';
 import PropTypes from 'prop-types';
@@ -7,7 +7,8 @@ import PropTypes from 'prop-types';
 import Layout from '../components/LayoutU';
 import { compose } from 'recompose';
 import stringToColor from '../components/utils/stringToColor';
-import {withAuthorization} from '../components/Session';
+import { withAuthorization } from '../components/Session';
+import { withFirebase } from '../components/Firebase';
 
 import EditProfile from '../components/EditProfile';
 
@@ -94,14 +95,44 @@ class Profile extends Component {
         super(props);
         this.state = { 
             tabVal: 0,
+            avaURL: null
         };
+    }
+
+    componentDidMount() {
+        const {uid, avaExt} = this.props.authUser;
+        if (avaExt) {
+            this.props.firebase
+                .getURL('users/ava/' + uid + '_200x200' + avaExt)
+                .then(url => {this.setState({ avaURL: url })})
+                .catch(error => {alert(error.code)});
+        }
+    }
+
+    onFileUpload = event => {
+        if (!event || !event.target || !event.target.files || event.target.files.length === 0) {
+            return;
+        }
+        const name = event.target.files[0].name;
+        const lastDot = name.lastIndexOf('.');
+        const ext = name.substring(lastDot);
+
+        this.props.firebase
+            .upload('users/ava/' + this.props.authUser.uid + ext, 
+                    event.target.files[0],
+                    () => {
+                        this.props.firebase.user(this.props.authUser.uid).set({avaExt: ext}, { merge: true })
+                            .then(() => {alert("success");window.location.reload()})
+                            .catch(error => {alert(error)});
+                    }, error => {alert(error)});
     }
 
     render() {
         const { classes, authUser, theme } = this.props;
+        const { avaURL } = this.state;
 
         return (
-            <Layout authUser={authUser}>
+            <Layout avaURL={avaURL} authUser={authUser}>
                 {/* <Box bgcolor="info.main" color="info.contrastText" className={classes.title}>
                     <Typography variant="h5">
                         Profile
@@ -113,7 +144,20 @@ class Profile extends Component {
                             <Card>
                                 <CardContent>
                                     <Box display="flex" justifyContent="center" m={2}>
-                                        <Avatar style={{backgroundColor: authUser.avaColor, color: theme.palette.getContrastText(authUser.avaColor)}} className={classes.ava}>{authUser.username.substr(0,1).toUpperCase()}</Avatar>
+                                       <Tooltip title="Change avatar">
+                                            <IconButton style={{padding: '0'}} component="label">
+
+                                                {avaURL ? <Avatar className={classes.ava} alt="ava" src={avaURL} /> : 
+                                                            <Avatar style={{backgroundColor: authUser.avaColor, color: theme.palette.getContrastText(authUser.avaColor)}} className={classes.ava}>{authUser.username.substr(0,1).toUpperCase()}</Avatar>}
+                                                
+                                                <input
+                                                    type="file"
+                                                    onChange={this.onFileUpload}
+                                                    accept="image/*"
+                                                    style={{ display: "none" }}
+                                                />
+                                            </IconButton>
+                                        </Tooltip>
                                     </Box>
                                     <Box display="flex" justifyContent="center" m={2}>
                                         <Typography variant="h5">
@@ -208,8 +252,8 @@ class Profile extends Component {
                                         </Typography>
                                         <Divider/>
                                         <Box mt={3} mb={5}>
-                                            {authUser.skills ? authUser.skills.map(skill => (
-                                                <Box mb={3}>
+                                            {authUser.skills ? authUser.skills.map((skill, id) => (
+                                                <Box key={id} mb={3}>
                                                     <Typography style={{fontSize: 18}} variant="caption">
                                                         {skill.name}
                                                     </Typography>
@@ -242,5 +286,6 @@ const condition = authUser => !!authUser;
 export default compose(
     withStyles(styles),
     withTheme,
+    withFirebase,
     withAuthorization(condition)
 )(Profile);

@@ -1,6 +1,7 @@
 import app from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import 'firebase/storage';
 
 const config = {
     apiKey: process.env.REACT_APP_FB_API_KEY,
@@ -25,6 +26,7 @@ class Firebase {
 
     this.auth = app.auth();
     this.db = app.firestore();
+    this.storage = app.storage();
 
     /* Social Sign In Method Provider */
 
@@ -92,6 +94,25 @@ class Firebase {
         fallback();
       }
     });
+  
+  // *** Cloud store API ***
+
+  upload = (path, file, next, fallback) => {
+    var uploadTask = this.storage.ref().child(path).put(file);
+    uploadTask.on('state_changed', (snapshot) => {
+      // Observe state change events such as progress, pause, and resume
+      // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+      
+    }, (error) => {
+      // Handle unsuccessful uploads
+      fallback(error);
+    }, () => {
+      // Handle successful uploads on complete
+      next();
+    });
+  };
+
+  getURL = (path) => this.storage.ref().child(path).getDownloadURL();
 
   // *** User API ***
 
