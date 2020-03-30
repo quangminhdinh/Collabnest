@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 
 import Layout from '../components/LayoutU';
 import { compose } from 'recompose';
+import stringToColor from '../components/utils/stringToColor';
 import {withAuthorization} from '../components/Session';
 
 import EditProfile from '../components/EditProfile';
@@ -207,57 +208,20 @@ class Profile extends Component {
                                         </Typography>
                                         <Divider/>
                                         <Box mt={3} mb={5}>
-                                            <Box mb={3}>
-                                                <Typography style={{fontSize: 18}} variant="caption">
-                                                    Javascript
-                                                </Typography>
-                                                <BorderLinearProgress
-                                                    className={classes.margin}
-                                                    variant="determinate"
-                                                    color="secondary"
-                                                    value={100}
-                                                    bgcolor='#26c6da'
-                                                />
-                                            </Box>
-
-                                            <Box mb={3}>
-                                                <Typography style={{fontSize: 18}} variant="caption">
-                                                    Python
-                                                </Typography>
-                                                <BorderLinearProgress
-                                                    className={classes.margin}
-                                                    variant="determinate"
-                                                    color="secondary"
-                                                    value={90}
-                                                    bgcolor='#1e88e5'
-                                                />
-                                            </Box>
-
-                                            <Box mb={3}>
-                                                <Typography style={{fontSize: 18}} variant="caption">
-                                                    Photoshop
-                                                </Typography>
-                                                <BorderLinearProgress
-                                                    className={classes.margin}
-                                                    variant="determinate"
-                                                    color="secondary"
-                                                    value={50}
-                                                    bgcolor='#fc4b6c'
-                                                />
-                                            </Box>
-
-                                            <Box mb={3}>
-                                                <Typography style={{fontSize: 18}} variant="caption">
-                                                    Office
-                                                </Typography>
-                                                <BorderLinearProgress
-                                                    className={classes.margin}
-                                                    variant="determinate"
-                                                    color="secondary"
-                                                    value={80}
-                                                    bgcolor='#ffb22b'
-                                                />
-                                            </Box>
+                                            {authUser.skills ? authUser.skills.map(skill => (
+                                                <Box mb={3}>
+                                                    <Typography style={{fontSize: 18}} variant="caption">
+                                                        {skill.name}
+                                                    </Typography>
+                                                    <BorderLinearProgress
+                                                        className={classes.margin}
+                                                        variant="determinate"
+                                                        color="secondary"
+                                                        value={skill.value}
+                                                        bgcolor={stringToColor(skill.name)}
+                                                    />
+                                                </Box>
+                                            )) : null}
                                         </Box>
                                     </TabPanel>
                                     <TabPanel value={this.state.tabVal} index={1}>

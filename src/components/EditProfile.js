@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import {withFirebase} from './Firebase';
 // import { withRouter } from 'react-router-dom';
 
-import { withStyles, Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Box } from '@material-ui/core';
+import { withStyles, Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Box, Chip, Slider } from '@material-ui/core';
 
 const styles = theme => ({
     root: {
@@ -18,6 +18,9 @@ const styles = theme => ({
         textAlign: 'center',
         color: theme.palette.text.secondary,
     },
+    skills: {
+        margin: theme.spacing(0.5),
+    }
 });
 
 const INITIAL_STATE = {
@@ -31,7 +34,10 @@ const INITIAL_STATE = {
     usernameError: null,
     open: false,
     dialogContent: '',
-    dialogStatus: ''
+    dialogStatus: '',
+    dialogForm: false,
+    tempSkillName: '',
+    tempSkillValue: 0
 };
 
 class EditProfile extends Component {
@@ -39,6 +45,12 @@ class EditProfile extends Component {
         super(props);
         this.state = Object.assign({}, INITIAL_STATE, this.props.authUser);
     }
+
+    handleSkillDelete = (skillToDelete) => () => {
+        this.setState((state) => ({
+            skills: state.skills.filter(skill => skill.key !== skillToDelete.key)
+        }));
+    };
 
     onChange = event => {
         this.setState({
@@ -69,7 +81,8 @@ class EditProfile extends Component {
             phone,
             address,
             bio,
-            website
+            website,
+            skills
         },
         { merge: true },
         )
@@ -77,6 +90,7 @@ class EditProfile extends Component {
             this.setState({
                 dialogStatus: 'Success',
                 dialogContent: 'Your profile has been updated',
+                dialogForm: false,
                 open: true
             })
 
@@ -85,6 +99,7 @@ class EditProfile extends Component {
             this.setState({
                 dialogStatus: 'Error',
                 dialogContent: error,
+                dialogForm: false,
                 open: true
             })
         });
@@ -92,15 +107,42 @@ class EditProfile extends Component {
     }
 
     handleClose = () => {
-        this.setState({ open: false})
-        if (this.state.dialogStatus === 'Success') {
-            window.location.reload();
+        this.setState({
+            tempSkillName: '',
+            tempSkillValue: 0
+        });
+        this.setState({ open: false});
+    }
+
+    handleOK = () => {
+        switch(this.state.dialogStatus) {
+            case 'Success':
+                window.location.reload();
+                break;
+            case 'Add new skill':
+                const {skills, tempSkillName, tempSkillValue} = this.state;
+                if (tempSkillName.trim() === '') {
+                    return ;
+                }
+                const newSkill = {
+                    key: skills.length > 0 ? skills[skills.length - 1].key + 1 : 0,
+                    name: tempSkillName,
+                    value: tempSkillValue
+                };
+                const newSkills = skills.concat([newSkill]);
+                this.setState({
+                    skills: newSkills,
+                    tempSkillName: '',
+                    tempSkillValue: 0
+                });
+                break;
         }
+        this.setState({ open: false});
     }
 
     render() {
         const { classes } = this.props;
-        const { username, company, position, phone, address, bio, skills, website, usernameError, open, dialogContent, dialogStatus } = this.state;
+        const { username, company, position, phone, address, bio, skills, website, usernameError, open, dialogContent, dialogStatus, dialogForm, tempSkillName, tempSkillValue } = this.state;
 
         const isInvalid = username.trim() === '';
 
@@ -169,6 +211,23 @@ class EditProfile extends Component {
                                     label="About me"
                                     onKeyDown={isInvalid ? null : this.onKeyDown} />
                     </form>
+                    <Box>
+                        <Button onClick={() => {this.setState({
+                                                    dialogStatus: 'Add new skill',
+                                                    dialogContent: '',
+                                                    dialogForm: true,
+                                                    open: true
+                                                })}} 
+                                className="tf-clgn1">Add skill</Button>
+                        {skills.map((skill) => (
+                            <Chip
+                                className={classes.skills}
+                                key={skill.key}
+                                label={skill.name + ": " + skill.value + "%"}
+                                onDelete={this.handleSkillDelete(skill)}
+                            />
+                        ))}
+                    </Box>
                     <Box mt={2} className="d-flex justify-content-center">
                         <Button disabled={isInvalid} color="primary" size="large" onClick={this.onSubmit} variant="contained">Update profile</Button>
                     </Box>
@@ -177,15 +236,41 @@ class EditProfile extends Component {
                         onClose={this.handleClose}
                         aria-labelledby="alert-dialog-title"
                         aria-describedby="alert-dialog-description"
+                        maxWidth={'sm'}
+                        fullWidth={true}
                 >
                     <DialogTitle id="alert-dialog-title">{dialogStatus}</DialogTitle>
                     <DialogContent>
                     <DialogContentText id="alert-dialog-description">
                         {dialogContent}
                     </DialogContentText>
+                    {dialogForm ? (
+                        <Box display="flex" alignItems="center">
+                            <TextField
+                                autoFocus
+                                style={{margin:'auto'}}
+                                value={tempSkillName}
+                                label="Skill"
+                                type="text"
+                                name="tempSkillName"
+                                onChange={this.onChange}
+                            />
+                            {/* <Box width="50%" display="inline-block"> */}
+                                <Slider value={tempSkillValue} 
+                                        name="tempSkillValue" 
+                                        onChange={(event, newValue) => {this.setState({ tempSkillValue: newValue })}} 
+                                        aria-labelledby="continuous-slider"
+                                        min={0}
+                                        max={100}
+                                        step={1}
+                                        style={{width: '50%', margin: 'auto'}}
+                                        valueLabelDisplay="auto" />
+                            {/* </Box> */}
+                        </Box>
+                    ) : null}
                     </DialogContent>
                     <DialogActions>
-                    <Button onClick={this.handleClose} color="primary" autoFocus>
+                    <Button onClick={this.handleOK} color="primary" autoFocus>
                         OK
                     </Button>
                     </DialogActions>
