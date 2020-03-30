@@ -70,10 +70,10 @@ class SignUp extends Component {
     onSubmit = () => {
         const { username, email, pass, confirmPass, isAdmin } = this.state;
 
-        if (username.length < 3 || username.length > 20) {
+        if (username.trim().length < 3 || username.trim().length > 20) {
             this.setState({ usernameError: 'Username must be from 3 to 20 characters'});
             return false;
-        } else if (pass.length < 6) {
+        } else if (pass.trim().length < 6) {
             this.setState({ passError: 'Password must be at least 6 characters long'});
             return false;
         } else if (pass !== confirmPass) {

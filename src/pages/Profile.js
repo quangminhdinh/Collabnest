@@ -8,6 +8,8 @@ import Layout from '../components/LayoutU';
 import { compose } from 'recompose';
 import {withAuthorization} from '../components/Session';
 
+import EditProfile from '../components/EditProfile';
+
 const styles = theme => ({
     title: {
         margin: theme.spacing(-3),
@@ -171,12 +173,21 @@ class Profile extends Component {
                                             <Typography variant="subtitle1">
                                                 Email: {authUser.email}
                                             </Typography>
-                                            <Typography variant="subtitle1">
-                                                Phone: +91 654 784 547
-                                            </Typography>
-                                            <Typography variant="subtitle1">
-                                                Address: 71 Pilgrim Avenue Chevy Chase, MD 20815
-                                            </Typography>
+                                            {authUser.phone ? (
+                                                <Typography variant="subtitle1">
+                                                    Phone: {authUser.phone}
+                                                </Typography>
+                                            ) : null}
+                                            {authUser.address ? (
+                                                <Typography variant="subtitle1">
+                                                    Address: {authUser.address}
+                                                </Typography>
+                                            ) : null}
+                                            {authUser.website ? (
+                                                <Typography variant="subtitle1">
+                                                    Website: <a href={authUser.website} rel="noopener noreferrer" target="_blank">{authUser.website}</a>
+                                                </Typography>
+                                            ) : null}
                                         </Box>
 
                                         <Typography className={classes.tabTitle} variant="overline">
@@ -184,9 +195,11 @@ class Profile extends Component {
                                         </Typography>
                                         <Divider/>
                                         <Box mt={3} mb={5}>
-                                            <Typography variant="subtitle1">
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                                            </Typography>
+                                            {authUser.bio ? (
+                                                <Typography variant="subtitle1">
+                                                    {authUser.bio}
+                                                </Typography>
+                                            ) : null}
                                         </Box>
 
                                         <Typography className={classes.tabTitle} variant="overline">
@@ -248,7 +261,7 @@ class Profile extends Component {
                                         </Box>
                                     </TabPanel>
                                     <TabPanel value={this.state.tabVal} index={1}>
-                                        Item Two
+                                        <EditProfile authUser={authUser} />
                                     </TabPanel>
                                 </Box>
                             </Card>
