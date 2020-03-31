@@ -6,6 +6,8 @@ import AuthUserContext from './context';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../constants/routes';
 
+import Loader from '../Loader';
+
 const withAuthorization = condition => Component => {
   class WithAuthorization extends React.Component {
     componentDidMount() {
@@ -27,7 +29,7 @@ const withAuthorization = condition => Component => {
       return (
         <AuthUserContext.Consumer>
           {authUser =>
-            condition(authUser) ? <Component authUser={authUser} {...this.props} /> : null
+            condition(authUser) ? <Component authUser={authUser} {...this.props} /> : <Loader open />
           }
         </AuthUserContext.Consumer>
       );

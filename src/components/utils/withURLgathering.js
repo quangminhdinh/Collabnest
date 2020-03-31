@@ -3,6 +3,8 @@ import React from 'react';
 import { compose } from 'recompose';
 import { withAuthorization } from '../Session';
 
+import Loader from '../Loader';
+
 const withURLgathering = (condition, files) => Component => {
     class WithURLgathering extends React.Component {
         constructor(props) {
@@ -40,7 +42,7 @@ const withURLgathering = (condition, files) => Component => {
         }
     
         render() {
-            return (<> { this.state.dataAvailable ? <Component data={this.state.data} {...this.props} /> : null } </>);
+            return (<> { this.state.dataAvailable ? <Component data={this.state.data} {...this.props} /> : <Loader open /> } </>);
         }
     }
   

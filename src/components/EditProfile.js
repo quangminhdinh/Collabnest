@@ -73,6 +73,8 @@ class EditProfile extends Component {
             return false;
         } 
 
+        this.props.openLoader();
+
         this.props.firebase.user(uid).set(
         {
             username,
@@ -87,6 +89,7 @@ class EditProfile extends Component {
         { merge: true },
         )
         .then(() => {
+            this.props.closeLoader();
             this.setState({
                 dialogStatus: 'Success',
                 dialogContent: 'Your profile has been updated',
@@ -96,6 +99,7 @@ class EditProfile extends Component {
 
         })
         .catch(error => {
+            this.props.closeLoader();
             this.setState({
                 dialogStatus: 'Error',
                 dialogContent: error,
@@ -149,12 +153,15 @@ class EditProfile extends Component {
         const lastDot = name.lastIndexOf('.');
         const ext = name.substring(lastDot);
 
+        this.props.openLoader();
+
         this.props.firebase
             .upload('users/cv/' + this.props.authUser.uid + ext, 
                     event.target.files[0],
                     () => {
                         this.props.firebase.user(this.props.authUser.uid).set({cvExt: ext}, { merge: true })
                             .then(() => {
+                                this.props.closeLoader();
                                 this.setState({
                                     dialogStatus: 'Success',
                                     dialogContent: 'Your CV has been updated',
@@ -162,8 +169,8 @@ class EditProfile extends Component {
                                     open: true
                                 })
                             })
-                            .catch(error => {alert(error)});
-                    }, error => {alert(error)});
+                            .catch(error => {this.props.closeLoader();alert(error)});
+                    }, error => {this.props.closeLoader();alert(error)});
     }
 
     render() {

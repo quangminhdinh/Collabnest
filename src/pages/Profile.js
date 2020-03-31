@@ -11,6 +11,7 @@ import withURLgathering from '../components/utils/withURLgathering';
 // import { withFirebase } from '../components/Firebase';
 
 import EditProfile from '../components/EditProfile';
+import Loader from '../components/Loader';
 
 const styles = theme => ({
     title: {
@@ -95,6 +96,7 @@ class Profile extends Component {
         super(props);
         this.state = { 
             tabVal: 0,
+            openLoader: false
         };
     }
 
@@ -106,14 +108,16 @@ class Profile extends Component {
         const lastDot = name.lastIndexOf('.');
         const ext = name.substring(lastDot);
 
+        this.setState({ openLoader: true });
+
         this.props.firebase
             .upload('users/ava/' + this.props.authUser.uid + ext, 
                     event.target.files[0],
                     () => {
                         this.props.firebase.user(this.props.authUser.uid).set({avaExt: ext}, { merge: true })
-                            .then(() => {alert("success");window.location.reload()})
-                            .catch(error => {alert(error)});
-                    }, error => {alert(error)});
+                            .then(() => {this.setState({ openLoader: false });alert("success");window.location.reload()})
+                            .catch(error => {this.setState({ openLoader: false });alert(error)});
+                    }, error => {this.setState({ openLoader: false });alert(error)});
     }
 
     render() {
@@ -260,13 +264,16 @@ class Profile extends Component {
                                         </Box>
                                     </TabPanel>
                                     <TabPanel value={this.state.tabVal} index={1}>
-                                        <EditProfile authUser={authUser} firebase={firebase}/>
+                                        <EditProfile openLoader={() => {this.setState({ openLoader: true })}}
+                                                     closeLoader={() => {this.setState({ openLoader: false })}}
+                                                     authUser={authUser} firebase={firebase}/>
                                     </TabPanel>
                                 </Box>
                             </Card>
                         </Grid>
                     </Grid>
                 </Box>
+                <Loader open={this.state.openLoader} />
             </Layout>
         );
     }
