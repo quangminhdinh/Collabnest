@@ -14,14 +14,14 @@ const withURLgathering = (condition, files) => Component => {
             };
         }
 
-        componentDidMount() {
-            files.forEach(file => {
+        async componentDidMount() {
+            await Promise.all(files.map(async (file) => {
                 const source = file.source === 'users' ? this.props.authUser : null;
                 const ext = source[file.type + 'Ext'];
                 if (ext) {
                     const path = file.compress ? file.source + '/' + file.type + '/' + source.uid + '_200x200' + ext : 
                                     file.source + '/' + file.type + '/' + source.uid + ext;
-                    this.props.firebase
+                    await this.props.firebase
                         .getURL(path)
                         .then(url => {
                             let clonedData = {...this.state.data};
@@ -32,8 +32,11 @@ const withURLgathering = (condition, files) => Component => {
                         })
                         .catch(error => {alert(error.code)});
                 }
-            });
-            this.setState({ dataAvailable: true });
+            }));
+            this.setState(() => ({
+                dataAvailable: true
+            }));
+            // this.setState({ dataAvailable: true });
         }
     
         render() {

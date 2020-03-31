@@ -136,6 +136,7 @@ class EditProfile extends Component {
                     tempSkillValue: 0
                 });
                 break;
+            default:
         }
         this.setState({ open: false});
     }

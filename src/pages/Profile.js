@@ -118,7 +118,7 @@ class Profile extends Component {
 
     render() {
         const { classes, authUser, theme, firebase, data } = this.props;
-
+        console.log(data);
         return (
             <Layout avaURL={data.avaURL} authUser={authUser}>
                 {/* <Box bgcolor="info.main" color="info.contrastText" className={classes.title}>
