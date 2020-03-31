@@ -7,8 +7,8 @@ import PropTypes from 'prop-types';
 import Layout from '../components/LayoutU';
 import { compose } from 'recompose';
 import stringToColor from '../components/utils/stringToColor';
-import { withAuthorization } from '../components/Session';
-import { withFirebase } from '../components/Firebase';
+import withURLgathering from '../components/utils/withURLgathering';
+// import { withFirebase } from '../components/Firebase';
 
 import EditProfile from '../components/EditProfile';
 
@@ -95,24 +95,7 @@ class Profile extends Component {
         super(props);
         this.state = { 
             tabVal: 0,
-            avaURL: null,
-            cvURL: null
         };
-    }
-
-    componentDidMount() {
-        const {uid, avaExt, cvExt} = this.props.authUser;
-        if (avaExt) {
-            this.props.firebase
-                .getURL('users/ava/' + uid + '_200x200' + avaExt)
-                .then(url => {this.setState({ avaURL: url })})
-                .catch(error => {alert(error.code)});
-        } if (cvExt) {
-            this.props.firebase
-                .getURL('users/cv/' + uid + cvExt)
-                .then(url => {this.setState({ cvURL: url })})
-                .catch(error => {alert(error.code)});
-        }
     }
 
     onFileUpload = event => {
@@ -134,11 +117,10 @@ class Profile extends Component {
     }
 
     render() {
-        const { classes, authUser, theme, firebase } = this.props;
-        const { avaURL, cvURL } = this.state;
+        const { classes, authUser, theme, firebase, data } = this.props;
 
         return (
-            <Layout avaURL={avaURL} authUser={authUser}>
+            <Layout avaURL={data.avaURL} authUser={authUser}>
                 {/* <Box bgcolor="info.main" color="info.contrastText" className={classes.title}>
                     <Typography variant="h5">
                         Profile
@@ -153,7 +135,7 @@ class Profile extends Component {
                                        <Tooltip title="Change avatar">
                                             <IconButton style={{padding: '0'}} component="label">
 
-                                                {avaURL ? <Avatar className={classes.ava} alt="ava" src={avaURL} /> : 
+                                                {data.avaURL ? <Avatar className={classes.ava} alt="ava" src={data.avaURL} /> : 
                                                             <Avatar style={{backgroundColor: authUser.avaColor, color: theme.palette.getContrastText(authUser.avaColor)}} className={classes.ava}>{authUser.username.substr(0,1).toUpperCase()}</Avatar>}
                                                 
                                                 <input
@@ -274,7 +256,7 @@ class Profile extends Component {
                                             )) : null}
                                         </Box>
                                         <Box mt={2} className="d-flex justify-content-center">
-                                            {cvURL ? <Button color="primary" href={cvURL} size="large" variant="contained">Download CV</Button> : null}
+                                            {data.cvURL ? <Button color="primary" href={data.cvURL} size="large" variant="contained">Download CV</Button> : null}
                                         </Box>
                                     </TabPanel>
                                     <TabPanel value={this.state.tabVal} index={1}>
@@ -295,6 +277,7 @@ const condition = authUser => !!authUser;
 export default compose(
     withStyles(styles),
     withTheme,
-    withFirebase,
-    withAuthorization(condition)
+    // withFirebase,
+    withURLgathering(condition, [{source: 'users', type: 'ava', compress: true}, 
+                                    {source: 'users', type: 'cv', compress: false}])
 )(Profile);
