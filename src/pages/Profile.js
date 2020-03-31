@@ -260,7 +260,7 @@ class Profile extends Component {
                                             )) : null}
                                         </Box>
                                         <Box mt={2} className="d-flex justify-content-center">
-                                            {data.cvURL ? <Button color="primary" href={data.cvURL} size="large" variant="contained">Download CV</Button> : null}
+                                            {data.cvURL ? <Button color="primary" rel="noopener noreferrer" target="_blank" href={data.cvURL} size="large" variant="contained">Download CV</Button> : null}
                                         </Box>
                                     </TabPanel>
                                     <TabPanel value={this.state.tabVal} index={1}>
