@@ -158,8 +158,8 @@ class EditProfile extends Component {
         this.props.firebase
             .upload('users/cv/' + this.props.authUser.uid + ext, 
                     event.target.files[0],
-                    () => {
-                        this.props.firebase.user(this.props.authUser.uid).set({cvExt: ext}, { merge: true })
+                    url => {
+                        this.props.firebase.user(this.props.authUser.uid).set({cvURL: url}, { merge: true })
                             .then(() => {
                                 this.props.closeLoader();
                                 this.setState({

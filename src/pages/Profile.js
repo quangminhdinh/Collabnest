@@ -6,8 +6,7 @@ import PropTypes from 'prop-types';
 
 import Layout from '../components/LayoutU';
 import { compose } from 'recompose';
-import stringToColor from '../components/utils/stringToColor';
-import withURLgathering from '../components/utils/withURLgathering';
+import { stringToColor, checkDynamicId } from '../components/utils';
 // import { withFirebase } from '../components/Firebase';
 
 import EditProfile from '../components/EditProfile';
@@ -113,18 +112,21 @@ class Profile extends Component {
         this.props.firebase
             .upload('users/ava/' + this.props.authUser.uid + ext, 
                     event.target.files[0],
-                    () => {
-                        this.props.firebase.user(this.props.authUser.uid).set({avaExt: ext}, { merge: true })
+                    url => {
+                        this.props.firebase.user(this.props.authUser.uid).set({avaURL: url}, { merge: true })
                             .then(() => {this.setState({ openLoader: false });alert("success");window.location.reload()})
-                            .catch(error => {this.setState({ openLoader: false });alert(error)});
+                            .catch(error => {this.setState({ openLoader: false });alert("123" + error)});
                     }, error => {this.setState({ openLoader: false });alert(error)});
     }
 
     render() {
-        const { classes, authUser, theme, firebase, data } = this.props;
-        console.log(data);
+        const { classes, authUser, theme, firebase, iUser } = this.props;
+        
+        // const profileData = iUser ? data.iUser : data.authUser;
+        const profileUser = iUser ? iUser : authUser;
+
         return (
-            <Layout avaURL={data.avaURL} authUser={authUser}>
+            <Layout authUser={authUser}>
                 {/* <Box bgcolor="info.main" color="info.contrastText" className={classes.title}>
                     <Typography variant="h5">
                         Profile
@@ -136,11 +138,14 @@ class Profile extends Component {
                             <Card>
                                 <CardContent>
                                     <Box display="flex" justifyContent="center" m={2}>
-                                       <Tooltip title="Change avatar">
-                                            <IconButton style={{padding: '0'}} component="label">
+                                       <Tooltip disableHoverListener={!!iUser} 
+                                                disableTouchListener={!!iUser}
+                                                disableFocusListener={!!iUser} 
+                                                title="Change avatar">
+                                            <IconButton disabled={!!iUser} style={{padding: '0'}} component="label">
 
-                                                {data.avaURL ? <Avatar className={classes.ava} alt="ava" src={data.avaURL} /> : 
-                                                            <Avatar style={{backgroundColor: authUser.avaColor, color: theme.palette.getContrastText(authUser.avaColor)}} className={classes.ava}>{authUser.username.substr(0,1).toUpperCase()}</Avatar>}
+                                                {profileUser.avaURL ? <Avatar className={classes.ava} alt="ava" src={profileUser.avaURL} /> : 
+                                                            <Avatar style={{backgroundColor: profileUser.avaColor, color: theme.palette.getContrastText(profileUser.avaColor)}} className={classes.ava}>{profileUser.username.substr(0,1).toUpperCase()}</Avatar>}
                                                 
                                                 <input
                                                     type="file"
@@ -153,20 +158,20 @@ class Profile extends Component {
                                     </Box>
                                     <Box display="flex" justifyContent="center" m={2}>
                                         <Typography variant="h5">
-                                            {authUser.username}
+                                            {profileUser.username}
                                         </Typography>
                                     </Box>
-                                    {authUser.position ? (
+                                    {profileUser.position ? (
                                         <Box className={classes.position} m={2} mt={-2}>
                                             <Typography component="p">
-                                                {authUser.position}
-                                                {authUser.company ? (" at " + authUser.company) : null}
+                                                {profileUser.position}
+                                                {profileUser.company ? (" at " + profileUser.company) : null}
                                             </Typography>
                                         </Box>
-                                    ) : (authUser.company ? (
+                                    ) : (profileUser.company ? (
                                             <Box className={classes.position} m={-2}>
                                                 <Typography component="p">
-                                                    {authUser.company}
+                                                    {profileUser.company}
                                                 </Typography>
                                             </Box>
                                         ) : null)
@@ -175,14 +180,14 @@ class Profile extends Component {
                                         <Tooltip title="Friends">
                                             <Box className={classes.stats} px={4} >
                                                 <GroupIcon /><Box pl={0.5}></Box>
-                                                <Typography variant="h6">{authUser.friends ? authUser.friends.length : 0}</Typography>
+                                                <Typography variant="h6">{profileUser.friends ? profileUser.friends.length : 0}</Typography>
                                             </Box>
                                         </Tooltip>
 
                                         <Tooltip title="Projects">
                                             <Box className={classes.stats} px={4}>
                                                 <LibraryBooksIcon /><Box pl={0.5}></Box>
-                                                <Typography variant="h6">{authUser.projects ? authUser.projects.length : 0}</Typography>
+                                                <Typography variant="h6">{profileUser.projects ? profileUser.projects.length : 0}</Typography>
                                             </Box>
                                         </Tooltip>
                                     </Box>
@@ -197,7 +202,7 @@ class Profile extends Component {
                                                 onChange={(event, newVal) => {this.setState({ tabVal: newVal})}} 
                                                 aria-label="profile tabs" >
                                             <Tab label="Profile" {...profProps(0)} />
-                                            <Tab label="Edit" {...profProps(1)} />
+                                            {!iUser && (<Tab label="Edit" {...profProps(1)} />)}
                                         </ModifiedTabs>
                                     {/* </AppBar> */}
                                     <Divider/>
@@ -208,21 +213,21 @@ class Profile extends Component {
                                         <Divider/>
                                         <Box mt={3} mb={5}>
                                             <Typography variant="subtitle1">
-                                                Email: {authUser.email}
+                                                Email: {profileUser.email}
                                             </Typography>
-                                            {authUser.phone ? (
+                                            {profileUser.phone ? (
                                                 <Typography variant="subtitle1">
-                                                    Phone: {authUser.phone}
+                                                    Phone: {profileUser.phone}
                                                 </Typography>
                                             ) : null}
-                                            {authUser.address ? (
+                                            {profileUser.address ? (
                                                 <Typography variant="subtitle1">
-                                                    Address: {authUser.address}
+                                                    Address: {profileUser.address}
                                                 </Typography>
                                             ) : null}
-                                            {authUser.website ? (
+                                            {profileUser.website ? (
                                                 <Typography variant="subtitle1">
-                                                    Website: <a href={authUser.website} rel="noopener noreferrer" target="_blank">{authUser.website}</a>
+                                                    Website: <a href={profileUser.website} rel="noopener noreferrer" target="_blank">{profileUser.website}</a>
                                                 </Typography>
                                             ) : null}
                                         </Box>
@@ -232,9 +237,9 @@ class Profile extends Component {
                                         </Typography>
                                         <Divider/>
                                         <Box mt={3} mb={5}>
-                                            {authUser.bio ? (
+                                            {profileUser.bio ? (
                                                 <Typography variant="subtitle1">
-                                                    {authUser.bio}
+                                                    {profileUser.bio}
                                                 </Typography>
                                             ) : null}
                                         </Box>
@@ -244,7 +249,7 @@ class Profile extends Component {
                                         </Typography>
                                         <Divider/>
                                         <Box mt={3} mb={5}>
-                                            {authUser.skills ? authUser.skills.map((skill, id) => (
+                                            {profileUser.skills ? profileUser.skills.map((skill, id) => (
                                                 <Box key={id} mb={3}>
                                                     <Typography style={{fontSize: 18}} variant="caption">
                                                         {skill.name}
@@ -260,14 +265,16 @@ class Profile extends Component {
                                             )) : null}
                                         </Box>
                                         <Box mt={2} className="d-flex justify-content-center">
-                                            {data.cvURL ? <Button color="primary" rel="noopener noreferrer" target="_blank" href={data.cvURL} size="large" variant="contained">Download CV</Button> : null}
+                                            {profileUser.cvURL ? <Button color="primary" rel="noopener noreferrer" target="_blank" href={profileUser.cvURL} size="large" variant="contained">Download CV</Button> : null}
                                         </Box>
                                     </TabPanel>
-                                    <TabPanel value={this.state.tabVal} index={1}>
-                                        <EditProfile openLoader={() => {this.setState({ openLoader: true })}}
-                                                     closeLoader={() => {this.setState({ openLoader: false })}}
-                                                     authUser={authUser} firebase={firebase}/>
-                                    </TabPanel>
+                                    { !iUser && (
+                                        <TabPanel value={this.state.tabVal} index={1}>
+                                            <EditProfile openLoader={() => {this.setState({ openLoader: true })}}
+                                                        closeLoader={() => {this.setState({ openLoader: false })}}
+                                                        authUser={authUser} firebase={firebase}/>
+                                        </TabPanel>
+                                    )}
                                 </Box>
                             </Card>
                         </Grid>
@@ -285,6 +292,8 @@ export default compose(
     withStyles(styles),
     withTheme,
     // withFirebase,
-    withURLgathering(condition, [{source: 'users', type: 'ava', compress: true}, 
-                                    {source: 'users', type: 'cv', compress: false}])
+    checkDynamicId(condition, 'users'),
+    // withURLgathering(condition, [{source: 'users', type: 'ava', compress: true, isAuthUser: true}, 
+    //                                 {source: 'users', type: 'ava', compress: true, isAuthUser: false}, 
+    //                                 {source: 'users', type: 'cv', compress: false, isAuthUser: false}])
 )(Profile);

@@ -108,7 +108,10 @@ class Firebase {
       fallback(error);
     }, () => {
       // Handle successful uploads on complete
-      next();
+      uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+        const readableURL = downloadURL.substring(0, downloadURL.lastIndexOf('token') - 1);
+        next(readableURL);
+      });
     });
   };
 

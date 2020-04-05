@@ -129,7 +129,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function Layout(props) {
-  const { container, authUser, avaURL } = props;
+  const { container, authUser } = props;
   const classes = useStyles();
   const theme = useTheme();
 
@@ -181,7 +181,7 @@ function Layout(props) {
                                     horizontal: 'right',
                                 }}
                                 variant="dot">
-                    {avaURL ? <Avatar className={classes.ava} alt="ava" src={avaURL} /> : 
+                    {authUser.avaURL ? <Avatar className={classes.ava} alt="ava" src={authUser.avaURL} /> : 
                               <Avatar style={{backgroundColor: authUser.avaColor, color: theme.palette.getContrastText(authUser.avaColor)}} className={classes.ava}>{authUser.username.substr(0,1).toUpperCase()}</Avatar> }
                 </StyledBadge>
             </ListItem>
@@ -192,7 +192,7 @@ function Layout(props) {
 
             <ListItem style={{paddingTop: "0", paddingBottom: "2rem"}} className={classes.liAva}>
                 <Tooltip title="Profile">
-                    <IconButton component={RouterLink} to={ROUTES.PROFILE} className={classes.emp}>
+                    <IconButton component={RouterLink} to={ROUTES.PROFILE + '/' + authUser.uid} className={classes.emp}>
                         <PersonIcon fontSize="small" className={classes.avaIco}/>
                     </IconButton>
                 </Tooltip>
@@ -300,7 +300,7 @@ function Layout(props) {
                                     <Paper>
                                         <ClickAwayListener onClickAway={handleClose}>
                                         <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                                            <MenuItem className="clr-dark-pop" component={RouterLink} to={ROUTES.PROFILE}>Profile</MenuItem>
+                                            <MenuItem className="clr-dark-pop" component={RouterLink} to={ROUTES.PROFILE + '/' + authUser.uid}>Profile</MenuItem>
                                             <MenuItem className="clr-dark-pop" component={RouterLink} to="#">Settings</MenuItem>
                                             <Divider/>
                                             <MenuItem onClick={props.firebase.doSignOut}>Log out</MenuItem>

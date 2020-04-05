@@ -13,7 +13,7 @@ function App() {
     <Switch>
         <Route path={ROUTES.SIGN_IN} component={SignIn} />
         <Route path={ROUTES.SIGN_UP} component={SignUp} />
-        <Route path={ROUTES.PROFILE} component={Profile} />
+        <Route path={ROUTES.PROFILE + '/:id'} component={Profile} />
         <Route path={ROUTES.HOME} component={HomePage} exact/>
     </Switch>
   );
