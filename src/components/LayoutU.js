@@ -8,9 +8,10 @@ import { FindInPage as FindInPageIcon, Menu as MenuIcon, Notifications as Notifi
           Person as PersonIcon, ExitToApp as ExitToAppIcon, Search as SearchIcon, Add as AddIcon, Chat as ChatIcon, 
           Dashboard as DashboardIcon, AddCircle as AddCircleIcon } from '@material-ui/icons';
 
-import {Link as RouterLink} from 'react-router-dom';
+import { Link as RouterLink, useLocation, NavLink } from 'react-router-dom';
 import Link from '@material-ui/core/Link';
-import {withFirebase} from './Firebase';
+import { withFirebase } from './Firebase';
+import CreateProjectForm from './CreateProjectForm';
 import * as ROUTES from './constants/routes';
 import logo from '../assets/img/TabLogo.png';
 
@@ -61,6 +62,9 @@ const useStyles = makeStyles(theme => ({
   },
   avaIco: {
     color: "rgba(255, 255, 255, 0.8)",
+  },
+  forcedRefreshLink: {
+    color: "rgba(0, 0, 0, 0.87)",
   },
   lIco: {
     color: "#fff",
@@ -125,6 +129,9 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       background: "#3f66d1",
     },
+  },
+  activeButton: {
+    background: "#3f66d1",
   }
 }));
 
@@ -132,8 +139,11 @@ function Layout(props) {
   const { container, authUser } = props;
   const classes = useStyles();
   const theme = useTheme();
+  const location = useLocation();
+  const currentPath = location.pathname.slice(1).split('/');
 
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [toggleCreatePrjForm, setToggleCreatePrjForm] = React.useState(false);
 
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
@@ -141,6 +151,14 @@ function Layout(props) {
   const handleToggle = () => {
     setOpen(prevOpen => !prevOpen);
   };
+
+  const openCreatePrjForm = () => {
+    setToggleCreatePrjForm(true);
+  }
+
+  const closeCreatePrjForm = () => {
+    setToggleCreatePrjForm(false);
+  }
 
   const handleClose = event => {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
@@ -192,9 +210,16 @@ function Layout(props) {
 
             <ListItem style={{paddingTop: "0", paddingBottom: "2rem"}} className={classes.liAva}>
                 <Tooltip title="Profile">
+                  {(currentPath[0] === 'profile' && currentPath[1] !== authUser.uid) ? (
+                    <IconButton component={Link} href={ROUTES.PROFILE + '/' + authUser.uid} className={classes.emp}>
+                        <PersonIcon fontSize="small" className={classes.avaIco}/>
+                    </IconButton>
+                  ) : (
                     <IconButton component={RouterLink} to={ROUTES.PROFILE + '/' + authUser.uid} className={classes.emp}>
                         <PersonIcon fontSize="small" className={classes.avaIco}/>
                     </IconButton>
+                  )}
+                    
                 </Tooltip>
 
                 <Box px={2}>
@@ -214,11 +239,11 @@ function Layout(props) {
 
             <Divider light/>
             
-            <ListItem component={RouterLink} to="#" className={classes.liButton} button key="new_prj">
+            <ListItem onClick={openCreatePrjForm} className={classes.liButton} button key="new_prj">
                 <ListItemIcon><AddCircleIcon className={classes.lIco}/></ListItemIcon>
                 <ListItemText primary="New project" />
             </ListItem>
-            <ListItem component={RouterLink} to={ROUTES.HOME} className={classes.liButton} button key="home">
+            <ListItem component={NavLink} to={ROUTES.HOME} activeClassName={classes.activeButton} exact className={classes.liButton} button key="home">
                 <ListItemIcon><DashboardIcon className={classes.lIco}/></ListItemIcon>
                 <ListItemText primary="My projects" />
             </ListItem>
@@ -278,7 +303,7 @@ function Layout(props) {
                         </Tooltip>
 
                         <Tooltip title="Create new project">
-                            <IconButton className="ic-but">
+                            <IconButton onClick={openCreatePrjForm} className="ic-but">
                                 <AddIcon className="nav-ic"/>
                             </IconButton>
                         </Tooltip>
@@ -300,7 +325,11 @@ function Layout(props) {
                                     <Paper>
                                         <ClickAwayListener onClickAway={handleClose}>
                                         <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
+                                        {(currentPath[0] === 'profile' && currentPath[1] !== authUser.uid) ? (
+                                            <MenuItem className={classes.forcedRefreshLink} component={Link} href={ROUTES.PROFILE + '/' + authUser.uid}>Profile</MenuItem>
+                                          ) : (
                                             <MenuItem className="clr-dark-pop" component={RouterLink} to={ROUTES.PROFILE + '/' + authUser.uid}>Profile</MenuItem>
+                                          )}
                                             <MenuItem className="clr-dark-pop" component={RouterLink} to="#">Settings</MenuItem>
                                             <Divider/>
                                             <MenuItem onClick={props.firebase.doSignOut}>Log out</MenuItem>
@@ -348,11 +377,12 @@ function Layout(props) {
         {props.children}
         <Box display={props.fabDisplay ? "inline-flex" : "none"}>
           <Tooltip  title="Create new project">
-              <Fab color="primary" className={classes.fab} aria-label="Create new project"><AddIcon /></Fab>
+              <Fab color="primary" className={classes.fab} onClick={openCreatePrjForm} aria-label="Create new project"><AddIcon /></Fab>
           </Tooltip>
         </Box></Box>
         <footer className={classes.footer}>© 2020 <a href="https://www.facebook.com/minh.dinh.112" rel="noopener noreferrer" target="_blank">Minh Dinh</a>, All rights reserved.</footer>
       </main>
+      <CreateProjectForm open={toggleCreatePrjForm} handleClose={closeCreatePrjForm} />
     </div>
   );
 }

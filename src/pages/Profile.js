@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 
 import Layout from '../components/LayoutU';
 import { compose } from 'recompose';
+// import queryString from 'query-string';
 import { stringToColor, checkDynamicId } from '../components/utils';
 // import { withFirebase } from '../components/Firebase';
 
@@ -98,6 +99,13 @@ class Profile extends Component {
             openLoader: false
         };
     }
+
+    // componentDidMount() {
+    //     let params = queryString.parse(this.props.location.search);
+    //     if (params.forceRefresh === 'true') {
+    //         window.location.reload();
+    //     }
+    // }
 
     onFileUpload = event => {
         if (!event || !event.target || !event.target.files || event.target.files.length === 0) {
